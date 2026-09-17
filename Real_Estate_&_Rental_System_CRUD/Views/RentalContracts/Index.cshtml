@@ -1,0 +1,40 @@
+﻿@model IEnumerable<Real_Estate___Rental_System_CRUD.Models.RentalContract>
+
+<div class="container">
+
+    <h1>عقود الإيجار المسجلة</h1>
+
+    <div class="text-end">
+        <a asp-action="Create" class="btn btn-primary"> New Contract </a>
+    </div>
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>رقم العقد</th>
+                <th>العقار (العنوان)</th>
+                <th>المستأجر</th>
+                <th>تاريخ البدء</th>
+                <th>تاريخ الانتهاء</th>
+                <th>قيمة الإيجار (ريال)</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var contract in Model)
+            {
+                <tr>
+                    <td>@contract.Id</td>
+                    <td>@(contract.Property != null ? contract.Property.Address : "غير محدد")</td>
+                    <td>@(contract.Tenant != null ? contract.Tenant.FullName : "غير محدد")</td>
+                    <td>@contract.StartDate.ToString("yyyy-MM-dd")</td>
+                    <td>@contract.EndDate.ToString("yyyy-MM-dd")</td>
+                    <td>@contract.ContractValue</td>
+                    <td>
+                        <a asp-action="Delete" asp-route-Id="@contract.Id" class="btn btn-danger"> Delete </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

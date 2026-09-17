@@ -1,0 +1,45 @@
+﻿@model IEnumerable<Real_Estate___Rental_System_CRUD.Models.Property>
+
+<div class="container">
+
+    <h1>العقارات المسجلة</h1>
+
+    <div class="text-end">
+        <a asp-action="Create" class="btn btn-primary"> New Property </a>
+    </div>
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>نوع العقار</th>
+                <th>المدينة</th>
+                <th>العنوان بالتفصيل</th>
+                <th>الإيجار السنوي (ريال)</th>
+                <th>حالة الإتاحة</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var property in Model)
+            {
+                <tr>
+                    <td>@property.Id</td>
+                    <td>@property.PropertyType</td>
+                    <td>@property.City</td>
+                    <td>@property.Address</td>
+                    <td>@property.AnnualRent</td>
+                    <td>
+                        <span class="badge @(property.IsAvailable ? "bg-success" : "bg-danger")">
+                            @(property.IsAvailable ? "متاح" : "مؤجر")
+                        </span>
+                    </td>
+                    <td>
+                        <a asp-action="Edit" asp-route-Id="@property.Id" class="btn btn-warning"> Edit </a>
+                        <a asp-action="Delete" asp-route-Id="@property.Id" class="btn btn-danger"> Delete </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

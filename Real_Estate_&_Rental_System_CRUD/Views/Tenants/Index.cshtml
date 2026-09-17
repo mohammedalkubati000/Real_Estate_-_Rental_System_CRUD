@@ -1,0 +1,39 @@
+﻿@model IEnumerable<Real_Estate___Rental_System_CRUD.Models.Tenant>
+
+<div class="container">
+
+    <h1>المستأجرين</h1>
+
+    <div class="text-end">
+        <a asp-action="Create" class="btn btn-primary"> New Tenant </a>
+    </div>
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>اسم المستأجر الكامل</th>
+                <th>رقم الهوية / الإقامة</th>
+                <th>رقم الجوال</th>
+                <th>البريد الإلكتروني</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var tenant in Model)
+            {
+                <tr>
+                    <td>@tenant.Id</td>
+                    <td>@tenant.FullName</td>
+                    <td>@tenant.NationalId</td>
+                    <td>@tenant.PhoneNumber</td>
+                    <td>@tenant.Email</td>
+                    <td>
+                        <a asp-action="Edit" asp-route-Id="@tenant.Id" class="btn btn-warning"> Edit </a>
+                        <a asp-action="Delete" asp-route-Id="@tenant.Id" class="btn btn-danger"> Delete </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

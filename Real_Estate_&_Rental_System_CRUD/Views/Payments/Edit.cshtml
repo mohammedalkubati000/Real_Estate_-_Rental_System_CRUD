@@ -1,0 +1,63 @@
+﻿@model Real_Estate___Rental_System_CRUD.Models.Payment
+@{
+    ViewData["Title"] = "Edit Payment";
+}
+
+<div class="container">
+    <h1>تعديل الدفعة المالية</h1>
+    <form asp-action="Edit" method="post">
+
+        <input type="hidden" asp-for="Id" />
+
+        <div class="text-danger" asp-validation-summary="All">
+        </div>
+
+        <div class="form-group mb-3">
+            <label asp-for="RentalContractId" class="control-label">تغيير العقد التابع له</label>
+            <select asp-for="RentalContractId" class="form-control" asp-items="ViewBag.RentalContractId"></select>
+            <span class="text-danger" asp-validation-for="RentalContractId"></span>
+        </div>
+
+        <div class="form-group mb-3">
+            <label asp-for="AmountPaid" class="control-label"></label>
+            <input asp-for="AmountPaid" class="form-control" type="number" step="0.01" />
+            <span class="text-danger" asp-validation-for="AmountPaid"></span>
+        </div>
+
+        <div class="form-group mb-3">
+            <label asp-for="PaymentDate" class="control-label"></label>
+            <input asp-for="PaymentDate" class="form-control" type="date" />
+            <span class="text-danger" asp-validation-for="PaymentDate"></span>
+        </div>
+
+        <div class="form-group mb-3">
+            <label asp-for="PaymentMethod" class="control-label"></label>
+            <select asp-for="PaymentMethod" class="form-control">
+                <option value="شبكة / مدى">شبكة / مدى</option>
+                <option value="تحويل بنكي">تحويل بنكي</option>
+                <option value="نقداً (كاش)">نقداً (كاش)</option>
+            </select>
+            <span class="text-danger" asp-validation-for="PaymentMethod"></span>
+        </div>
+
+        <div class="form-group mb-3">
+            <label asp-for="Status" class="control-label"></label>
+            <select asp-for="Status" class="form-control">
+                <option value="مدفوعة">مدفوعة</option>
+                <option value="معلقة / تحت المراجعة">معلقة / تحت المراجعة</option>
+            </select>
+            <span class="text-danger" asp-validation-for="Status"></span>
+        </div>
+
+        <div class="form-group mt-4">
+            <input type="submit" value="Update" class="btn btn-warning" />
+        </div>
+    </form>
+    <div class="mt-3">
+        <a asp-action="Index">Back to List</a>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

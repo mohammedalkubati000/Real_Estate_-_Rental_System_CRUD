@@ -1,0 +1,45 @@
+﻿@model IEnumerable<Real_Estate___Rental_System_CRUD.Models.Payment>
+
+<div class="container">
+
+    <h1>سجل المدفوعات المالية</h1>
+
+    <div class="text-end">
+        <a asp-action="Create" class="btn btn-primary"> New Payment </a>
+    </div>
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>رقم السداد</th>
+                <th>تفاصيل العقد (المستأجر)</th>
+                <th>المبلغ المدفوع (ريال)</th>
+                <th>تاريخ الدفع</th>
+                <th>طريقة الدفع</th>
+                <th>حالة الدفعة</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var payment in Model)
+            {
+                <tr>
+                    <td>@payment.Id</td>
+                    <td>@(payment.RentalContract != null && payment.RentalContract.Tenant != null ? $"عقد رقم {payment.RentalContractId} - {payment.RentalContract.Tenant.FullName}" : "غير محدد")</td>
+                    <td>@payment.AmountPaid</td>
+                    <td>@payment.PaymentDate.ToString("yyyy-MM-dd")</td>
+                    <td>@payment.PaymentMethod</td>
+                    <td>
+                        <span class="badge @(payment.Status == "مدفوعة" ? "bg-success" : "bg-warning")">
+                            @payment.Status
+                        </span>
+                    </td>
+                    <td>
+                        <a asp-action="Edit" asp-route-Id="@payment.Id" class="btn btn-warning"> Edit </a>
+                        <a asp-action="Delete" asp-route-Id="@payment.Id" class="btn btn-danger"> Delete </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

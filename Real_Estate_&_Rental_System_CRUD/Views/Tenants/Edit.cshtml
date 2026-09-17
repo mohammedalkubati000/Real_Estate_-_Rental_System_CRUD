@@ -1,0 +1,50 @@
+﻿@model Real_Estate___Rental_System_CRUD.Models.Tenant
+@{
+    ViewData["Title"] = "Edit Tenant";
+}
+
+<div class="container">
+    <h1>Edit Tenant</h1>
+    <form asp-action="Edit" method="post">
+
+        <input type="hidden" asp-for="Id" />
+
+        <div class="text-danger" asp-validation-summary="All">
+        </div>
+
+        <div class="form-group mb-3">
+            <label asp-for="FullName" class="control-label"></label>
+            <input asp-for="FullName" class="form-control" />
+            <span class="text-danger" asp-validation-for="FullName"></span>
+        </div>
+
+        <div class="form-group mb-3">
+            <label asp-for="NationalId" class="control-label"></label>
+            <input asp-for="NationalId" class="form-control" />
+            <span class="text-danger" asp-validation-for="NationalId"></span>
+        </div>
+
+        <div class="form-group mb-3">
+            <label asp-for="PhoneNumber" class="control-label"></label>
+            <input asp-for="PhoneNumber" class="form-control" />
+            <span class="text-danger" asp-validation-for="PhoneNumber"></span>
+        </div>
+
+        <div class="form-group mb-3">
+            <label asp-for="Email" class="control-label"></label>
+            <input asp-for="Email" class="form-control" type="email" />
+            <span class="text-danger" asp-validation-for="Email"></span>
+        </div>
+
+        <div class="form-group mt-4">
+            <input type="submit" value="Update" class="btn btn-warning" />
+        </div>
+    </form>
+    <div class="mt-3">
+        <a asp-action="Index">Back to List</a>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
