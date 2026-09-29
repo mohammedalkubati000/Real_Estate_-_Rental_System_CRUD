@@ -15,6 +15,12 @@ namespace Real_Estate___Rental_System_CRUD.Controllers
             _db = db;
         }
 
+        //////
+
+        //Index
+
+        //////
+        
         public ActionResult Index()
         {
            
@@ -22,15 +28,13 @@ namespace Real_Estate___Rental_System_CRUD.Controllers
                 .Include(c => c.Property)
                 .Include(c => c.Tenant)
                 .ToList();
-            return View("~/Views/RentalContracts/Index.cshtml", contracts);
+            return View(contracts);
         }
 
         [HttpGet]
         public ActionResult Create()
         {
-            
-            ViewBag.PropertyId = new SelectList(_db.Properties.Where(p => p.IsAvailable).ToList(), "Id", "Address");
-            ViewBag.TenantId = new SelectList(_db.Tenants.ToList(), "Id", "FullName");
+            LoadDropdowns();
             return View();
         }
 
@@ -41,7 +45,6 @@ namespace Real_Estate___Rental_System_CRUD.Controllers
             {
                 _db.RentalContracts.Add(contract);
 
-                
                 var property = _db.Properties.Find(contract.PropertyId);
                 if (property != null) property.IsAvailable = false;
 
@@ -49,11 +52,18 @@ namespace Real_Estate___Rental_System_CRUD.Controllers
                 return RedirectToAction("Index");
             }
 
-            ViewBag.PropertyId = new SelectList(_db.Properties.Where(p => p.IsAvailable).ToList(), "Id", "Address", contract.PropertyId);
-            ViewBag.TenantId = new SelectList(_db.Tenants.ToList(), "Id", "FullName", contract.TenantId);
+            LoadDropdowns();
             ModelState.AddModelError("", "Please fill all the required fields.");
             return View(contract);
         }
+        private void LoadDropdowns()
+        {
+            ViewBag.PropertyId = new SelectList(_db.Properties.Where(p => p.IsAvailable), "Id", "Address");
+            ViewBag.TenantId = new SelectList(_db.Tenants, "Id", "FullName");
+        }
+
+
+
 
         //===============
         //Delete
@@ -74,17 +84,19 @@ namespace Real_Estate___Rental_System_CRUD.Controllers
         }
 
         [HttpPost]
-        public ActionResult Delete(RentalContract contract)
+        [ActionName("Delete")]
+        public ActionResult DeleteConfirmed(int Id)
         {
-            var originalContract = _db.RentalContracts.Find(contract.Id);
-            if (originalContract != null)
+            var contract = _db.RentalContracts.Find(Id);
+            if (contract != null)
             {
-                
-                var property = _db.Properties.Find(originalContract.PropertyId);
+
+                var property = _db.Properties.Find(contract.PropertyId);
                 if (property != null) property.IsAvailable = true;
 
-                _db.RentalContracts.Remove(originalContract);
+                _db.RentalContracts.Remove(contract);
                 _db.SaveChanges();
+
             }
             return RedirectToAction("Index");
         }

@@ -18,25 +18,17 @@ namespace Real_Estate___Rental_System_CRUD.Controllers
 
         public ActionResult Index()
         {
-           
-            IEnumerable<Payment> payments = _db.Payments
-                .Include(p => p.RentalContract)
-                .ThenInclude(c => c.Tenant)
-                .ToList();
+
+            IEnumerable<Payment> payments = _db.Payments.Include(p => p.RentalContract)
+            .ThenInclude(c => c.Tenant).ToList();
             return View(payments);
         }
 
+        
         [HttpGet]
         public ActionResult Create()
         {
             
-            var contractsList = _db.RentalContracts.Include(c => c.Tenant).ToList().Select(c => new
-            {
-                Id = c.Id,
-                DisplayText = $"عقد رقم {c.Id} - {c.Tenant?.FullName}"
-            });
-
-            ViewBag.RentalContractId = new SelectList(contractsList, "Id", "DisplayText");
             return View();
         }
 
@@ -49,12 +41,80 @@ namespace Real_Estate___Rental_System_CRUD.Controllers
                 _db.SaveChanges();
                 return RedirectToAction("Index");
             }
-
-            var contractsList = _db.RentalContracts.Include(c => c.Tenant).ToList().Select(c => new { Id = c.Id, DisplayText = $"عقد رقم {c.Id} - {c.Tenant?.FullName}" });
-            ViewBag.RentalContractId = new SelectList(contractsList, "Id", "DisplayText", payment.RentalContractId);
+            
             ModelState.AddModelError("", "Please fill all the required fields.");
             return View(payment);
+
         }
+
+      
+        //Edit
+        
+        [HttpGet]
+        public ActionResult Edit(int Id)
+        {
+            var payment = _db.Payments.Find(Id);
+            if (payment == null)
+            {
+                return NotFound();
+            }
+
+            return View(payment);
+        }
+
+        [HttpPost]
+        public ActionResult Edit(Payment payment)
+        {
+            if (ModelState.IsValid)
+            {
+                _db.Payments.Update(payment);
+                _db.SaveChanges();
+                return RedirectToAction("Index");
+            }
+            ModelState.AddModelError("", "Please fill all the required fields.");
+            return View(payment);
+
+        }
+
+        //Delete
+
+        [HttpGet]
+        public ActionResult Delete(int Id)
+        {
+            var payment = _db.Payments
+                .Include(p => p.RentalContract)
+                .ThenInclude(c => c.Tenant)
+                .FirstOrDefault(p => p.Id == Id);
+            if (payment == null)
+            {
+                return NotFound();
+            }
+
+                return View(payment);
+        }
+
+        [HttpPost]
+        [ActionName("Delete")]
+        public ActionResult DeleteConfirmed(int Id)
+        {
+            var payment = _db.Payments.Find(Id);
+            if (payment != null)
+            {
+                _db.Payments.Remove(payment);
+                _db.SaveChanges();
+            }
+
+            return RedirectToAction("Index");
+
+
+        }
+
+
+
+
+
+
+
     }
 
 }

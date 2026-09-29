@@ -13,11 +13,20 @@ namespace Real_Estate___Rental_System_CRUD.Controllers
             _db = db;
         }
 
+        //////
+
+        //Index
+
+        //////
         public ActionResult Index()
         {
             IEnumerable<Property> properties = _db.Properties.ToList();
             return View(properties);
+            
         }
+
+
+        //Create
 
         [HttpGet]
         public ActionResult Create()
@@ -38,15 +47,19 @@ namespace Real_Estate___Rental_System_CRUD.Controllers
             return View(property);
         }
 
+
+        //Edit
+
+
         [HttpGet]
         public ActionResult Edit(int Id)
         {
-            var property = _db.Properties.Find(Id);
-            if (property == null)
-            {
-                return NotFound();
-            }
-            return View(property);
+                var property = _db.Properties.Find(Id);
+                if (property == null)
+                {
+                    return NotFound();
+                }
+                return View(property);
         }
 
         [HttpPost]
@@ -62,6 +75,10 @@ namespace Real_Estate___Rental_System_CRUD.Controllers
             return View(property);
         }
 
+
+        //Delete
+
+
         [HttpGet]
         public ActionResult Delete(int Id)
         {
@@ -74,8 +91,14 @@ namespace Real_Estate___Rental_System_CRUD.Controllers
         }
 
         [HttpPost]
-        public ActionResult Delete(Property property)
+        [ActionName("Delete")]
+        public ActionResult DeleteConfirmed(int Id )
         {
+            var property = _db.Properties.Find(Id);
+            if (property == null)
+            {
+                return NotFound();
+            }
             _db.Properties.Remove(property);
             _db.SaveChanges();
             return RedirectToAction("Index");

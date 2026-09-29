@@ -13,11 +13,20 @@ namespace Real_Estate___Rental_System_CRUD.Controllers
             _db = db;
         }
 
+        //////
+
+        //Index
+
+        //////
+
+
         public ActionResult Index()
         {
             IEnumerable<Tenant> tenants = _db.Tenants.ToList();
             return View(tenants);
         }
+
+        //Create
 
         [HttpGet]
         public ActionResult Create()
@@ -34,9 +43,13 @@ namespace Real_Estate___Rental_System_CRUD.Controllers
                 _db.SaveChanges();
                 return RedirectToAction("Index");
             }
-            ModelState.AddModelError("", "Please fill all the required fields.");
+            ModelState.AddModelError(" ", "Please fill all the required fields.");
             return View(tenant);
         }
+
+
+        //Edit
+
 
         [HttpGet]
         public ActionResult Edit(int Id)
@@ -62,6 +75,10 @@ namespace Real_Estate___Rental_System_CRUD.Controllers
             return View(tenant);
         }
 
+
+        //Delete
+
+
         [HttpGet]
         public ActionResult Delete(int Id)
         {
@@ -74,10 +91,16 @@ namespace Real_Estate___Rental_System_CRUD.Controllers
         }
 
         [HttpPost]
-        public ActionResult Delete(Tenant tenant)
+        [ActionName("Delete")]
+        public ActionResult DeleteConfirmed(int Id)
         {
-            _db.Tenants.Remove(tenant);
-            _db.SaveChanges();
+            var tenant = _db.Tenants.Find(Id);
+            if (tenant == null)
+            {
+                return NotFound();
+            }
+                _db.Tenants.Remove(tenant);
+                _db.SaveChanges();
             return RedirectToAction("Index");
         }
     }
