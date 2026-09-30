@@ -14,5 +14,7 @@ namespace Real_Estate___Rental_System_CRUD.Data
         public DbSet<RentalContract> RentalContracts { get; set; }
         public DbSet<Payment> Payments { get; set; }
 
+      //ublic DbSet<User> Users { get; set; }
+
     }
 }

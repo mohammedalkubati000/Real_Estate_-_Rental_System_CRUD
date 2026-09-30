@@ -1,9 +1,12 @@
 using Microsoft.AspNetCore.Mvc;
 using Real_Estate___Rental_System_CRUD.Models;
 using System.Diagnostics;
+using Microsoft.AspNetCore.Authorization;
+
 
 namespace Real_Estate___Rental_System_CRUD.Controllers
 {
+   
     public class HomeController : Controller
     {
         public IActionResult Index()

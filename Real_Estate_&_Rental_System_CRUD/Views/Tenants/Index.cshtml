@@ -1,5 +1,7 @@
 ﻿@model IEnumerable<Real_Estate___Rental_System_CRUD.Models.Tenant>
-
+@{
+    ViewData["Title"] = "Index";
+}
 <div class="container">
 
     <h1>المستأجرين</h1>
@@ -31,9 +33,12 @@
                     <td>
                         <a asp-action="Edit" asp-route-Id="@tenant.Id" class="btn btn-warning"> Edit </a>
                         <a asp-action="Delete" asp-route-Id="@tenant.Id" class="btn btn-danger"> Delete </a>
+
+                        
                     </td>
                 </tr>
             }
         </tbody>
     </table>
 </div>
+

@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Real_Estate___Rental_System_CRUD.Data;
-
+using Microsoft.AspNetCore.Authentication.Cookies;
+using BCrypt.Net;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -9,6 +10,16 @@ var conectionString = builder.Configuration.GetConnectionString("DefaultConnecti
 
 builder.Services.AddDbContext<AppDbContext>(options =>
 options.UseSqlServer(conectionString));
+
+
+// Cookie Authentication 
+
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options => {
+        options.LoginPath = "/Account/Login";
+        options.AccessDeniedPath = "/Account/AccessDenied";
+    });
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -22,6 +33,7 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapStaticAssets();
