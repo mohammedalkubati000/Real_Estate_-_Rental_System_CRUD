@@ -18,34 +18,35 @@ namespace Real_Estate___Rental_System_CRUD.Controllers
             {
                 return RedirectToAction("Index", "Home");
             }
-            return View();
+            return View("Login(");
         }
 
 
-
-        [HttpPost]
-        public async Task<IActionResult> Login(string email, string password)
-        { 
-          if(email =="admon@test.com" && password =="123456")
-          {
-                var claims = new List<Claim>
-                {
-                    new Claim(ClaimTypes.Name, email),
-                    new Claim(ClaimTypes.NameIdentifier,"1")
-                };
-                var identity = new ClaimsIdentity(claims, "login");
-                var principal = new ClaimsPrincipal(identity);
-                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,principal);
-                return RedirectToAction("Index", "Home");
-          }
-            ViewBag.ErrorMessage = "Invalid email or password";
-            return View();
-        }
-        [HttpPost]
-        public async Task<IActionResult> Logout()
-        {
-            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            return RedirectToAction("Login");
-        }
+        ////
+        //[HttpPost]
+        //public async Task<IActionResult> Login(string email, string password)
+        //{ 
+        //  if(email =="admon@test.com" && password =="123456")
+        //  {
+        //        var claims = new List<Claim>
+        //        {
+        //            new Claim(ClaimTypes.Name, email),
+        //            new Claim(ClaimTypes.NameIdentifier,"1")
+        //        };
+        //        var identity = new ClaimsIdentity(claims, "login");
+        //        var principal = new ClaimsPrincipal(identity);
+        //        await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,principal);
+        //        return RedirectToAction("Index", "Home");
+        //  }
+        //    ViewBag.ErrorMessage = "Invalid email or password";
+        //    return View();
+        //}
+        //[HttpPost]
+        //public async Task<IActionResult> Logout()
+        //{
+        //    await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+        //    return RedirectToAction("Login");
+        //}
+        
     }
 }
