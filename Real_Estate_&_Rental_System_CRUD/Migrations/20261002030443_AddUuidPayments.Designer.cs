@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Real_Estate___Rental_System_CRUD.Data;
 
@@ -11,9 +12,11 @@ using Real_Estate___Rental_System_CRUD.Data;
 namespace Real_Estate___Rental_System_CRUD.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20261002030443_AddUuidPayments")]
+    partial class AddUuidPayments
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -87,14 +90,7 @@ namespace Real_Estate___Rental_System_CRUD.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Uuid")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("Uuid")
-                        .IsUnique();
 
                     b.ToTable("Properties");
                 });
@@ -122,18 +118,11 @@ namespace Real_Estate___Rental_System_CRUD.Migrations
                     b.Property<int>("TenantId")
                         .HasColumnType("int");
 
-                    b.Property<string>("Uuid")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
                     b.HasKey("Id");
 
                     b.HasIndex("PropertyId");
 
                     b.HasIndex("TenantId");
-
-                    b.HasIndex("Uuid")
-                        .IsUnique();
 
                     b.ToTable("RentalContracts");
                 });

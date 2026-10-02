@@ -1,0 +1,38 @@
+﻿@model User
+@{
+    ViewData["Title"] = "Details User";
+}
+
+<h1>Details User</h1>
+
+<form asp-action="Details" method="post">
+
+    
+    <input asp-for="Id" type="hidden" />
+
+    <div class="mb-3">
+        <label class="fw-bold">Name</label>
+        <div>@Model.Name</div>
+    </div>
+
+    <div class="mb-3">
+        <label class="fw-bold">UserName</label>
+        <div>@Model.UserName</div>
+    </div>
+
+    <div class="mb-3">
+        <label class="fw-bold">Email</label>
+        <div>@Model.Email</div>
+    </div>
+   
+
+    
+
+
+
+    <a asp-action="Index"
+       class="btn btn-secondary">
+        Back
+    </a>
+
+</form>

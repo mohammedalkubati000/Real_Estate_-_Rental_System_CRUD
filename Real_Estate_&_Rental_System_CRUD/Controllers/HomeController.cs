@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace Real_Estate___Rental_System_CRUD.Controllers
 {
-   
+    [Authorize]
     public class HomeController : Controller
     {
         public IActionResult Index()

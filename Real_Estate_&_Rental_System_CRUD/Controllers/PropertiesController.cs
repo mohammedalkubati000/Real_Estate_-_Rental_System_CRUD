@@ -5,7 +5,7 @@ using Real_Estate___Rental_System_CRUD.Models;
 
 namespace Real_Estate___Rental_System_CRUD.Controllers
 {
-  
+    [Authorize]
     public class PropertiesController : Controller
     {
         private readonly AppDbContext _db;
@@ -54,10 +54,10 @@ namespace Real_Estate___Rental_System_CRUD.Controllers
 
 
         [HttpGet]
-        public ActionResult Edit(int Id)
+        public ActionResult Edit(string Uuid)
         {
-                var property = _db.Properties.Find(Id);
-                if (property == null)
+                var property = _db.Properties.FirstOrDefault(m => m.Uuid == Uuid);
+            if (property == null)
                 {
                     return NotFound();
                 }
@@ -69,7 +69,17 @@ namespace Real_Estate___Rental_System_CRUD.Controllers
         {
             if (ModelState.IsValid)
             {
-                _db.Properties.Update(property);
+                var oldProperty = _db.Properties.FirstOrDefault(m => m.Uuid == property.Uuid);
+                
+                if (oldProperty == null)
+
+                    return NotFound();
+                oldProperty.PropertyType = property.PropertyType;
+                oldProperty.City = property.City;
+                oldProperty.Address = property.Address;
+                oldProperty.AnnualRent = property.AnnualRent;
+
+               
                 _db.SaveChanges();
                 return RedirectToAction("Index");
             }
@@ -82,9 +92,9 @@ namespace Real_Estate___Rental_System_CRUD.Controllers
 
 
         [HttpGet]
-        public ActionResult Delete(int Id)
+        public ActionResult Delete(string Uuid)
         {
-            var property = _db.Properties.Find(Id);
+            var property = _db.Properties.FirstOrDefault(m => m.Uuid == Uuid);
             if (property == null)
             {
                 return NotFound();
@@ -94,9 +104,9 @@ namespace Real_Estate___Rental_System_CRUD.Controllers
 
         [HttpPost]
         [ActionName("Delete")]
-        public ActionResult DeleteConfirmed(int Id )
+        public ActionResult DeleteConfirmed(Property property)
         {
-            var property = _db.Properties.Find(Id);
+            var oldprop = _db.Properties.FirstOrDefault(m => m.Uuid == property.Uuid);
             if (property == null)
             {
                 return NotFound();

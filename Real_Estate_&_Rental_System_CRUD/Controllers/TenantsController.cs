@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Real_Estate___Rental_System_CRUD.Data;
 using Real_Estate___Rental_System_CRUD.Models;
 
 namespace Real_Estate___Rental_System_CRUD.Controllers
 {
+    [Authorize]
     public class TenantsController : Controller
     {
         private readonly AppDbContext _db;
@@ -52,9 +54,9 @@ namespace Real_Estate___Rental_System_CRUD.Controllers
 
 
         [HttpGet]
-        public ActionResult Edit(int Id)
+        public ActionResult Edit(string Uuid)
         {
-            var tenant = _db.Tenants.Find(Id);
+            var tenant = _db.Tenants.FirstOrDefault(m => m.Uuid == Uuid);
             if (tenant == null)
             {
                 return NotFound();
@@ -67,7 +69,18 @@ namespace Real_Estate___Rental_System_CRUD.Controllers
         {
             if (ModelState.IsValid)
             {
-                _db.Tenants.Update(tenant);
+                var oldTenant = _db.Tenants.FirstOrDefault(m => m.Uuid == tenant.Uuid);
+                if(oldTenant == null)
+                
+                    return NotFound();
+                
+
+                oldTenant.FullName = tenant.FullName;
+                oldTenant.NationalId = tenant.NationalId;
+                oldTenant.PhoneNumber = tenant.PhoneNumber;
+                oldTenant.Email = tenant.Email;
+
+                
                 _db.SaveChanges();
                 return RedirectToAction("Index");
             }
@@ -80,9 +93,9 @@ namespace Real_Estate___Rental_System_CRUD.Controllers
 
 
         [HttpGet]
-        public ActionResult Delete(int Id)
+        public ActionResult Delete(string Uuid )
         {
-            var tenant = _db.Tenants.Find(Id);
+            var tenant = _db.Tenants.FirstOrDefault(m => m.Uuid == Uuid);
             if (tenant == null)
             {
                 return NotFound();
@@ -92,13 +105,13 @@ namespace Real_Estate___Rental_System_CRUD.Controllers
 
         [HttpPost]
         [ActionName("Delete")]
-        public ActionResult DeleteConfirmed(int Id)
+        public ActionResult DeleteConfirmed(Tenant tenant)
         {
-            var tenant = _db.Tenants.Find(Id);
-            if (tenant == null)
-            {
+            var olddept = _db.Tenants.FirstOrDefault(m => m.Uuid == tenant.Uuid);
+            if (olddept == null)
+
                 return NotFound();
-            }
+            
                 _db.Tenants.Remove(tenant);
                 _db.SaveChanges();
             return RedirectToAction("Index");

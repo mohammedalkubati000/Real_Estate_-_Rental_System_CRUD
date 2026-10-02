@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Real_Estate___Rental_System_CRUD.Data;
@@ -6,6 +7,7 @@ using Real_Estate___Rental_System_CRUD.Models;
 
 namespace Real_Estate___Rental_System_CRUD.Controllers
 {
+    [Authorize]
     public class RentalContractsController : Controller
     {
         private readonly AppDbContext _db;
@@ -20,10 +22,10 @@ namespace Real_Estate___Rental_System_CRUD.Controllers
         //Index
 
         //////
-        
+
         public ActionResult Index()
         {
-           
+
             IEnumerable<RentalContract> contracts = _db.RentalContracts
                 .Include(c => c.Property)
                 .Include(c => c.Tenant)
@@ -69,12 +71,14 @@ namespace Real_Estate___Rental_System_CRUD.Controllers
         //Delete
         //===============
         [HttpGet]
-        public ActionResult Delete(int Id)
+        public ActionResult Delete(string Uuid)
         {
+            if (string.IsNullOrEmpty(Uuid)) return NotFound();
+
             var contract = _db.RentalContracts
                 .Include(c => c.Property)
                 .Include(c => c.Tenant)
-                .FirstOrDefault(c => c.Id == Id);
+                .FirstOrDefault(c => c.Uuid == Uuid);
 
             if (contract == null)
             {
@@ -84,17 +88,17 @@ namespace Real_Estate___Rental_System_CRUD.Controllers
         }
 
         [HttpPost]
-        [ActionName("Delete")]
-        public ActionResult DeleteConfirmed(int Id)
+        [ActionName("Delete")] 
+        public ActionResult DeleteConfirmed(RentalContract rentalContract)
         {
-            var contract = _db.RentalContracts.Find(Id);
-            if (contract != null)
+            var oldCon = _db.RentalContracts.FirstOrDefault(m => m.Uuid == rentalContract.Uuid);
+            if (oldCon != null)
             {
 
-                var property = _db.Properties.Find(contract.PropertyId);
+                var property = _db.Properties.Find(oldCon.PropertyId);
                 if (property != null) property.IsAvailable = true;
 
-                _db.RentalContracts.Remove(contract);
+                _db.RentalContracts.Remove(oldCon);
                 _db.SaveChanges();
 
             }

@@ -31,7 +31,7 @@
                     <td>@contract.EndDate.ToString("yyyy-MM-dd")</td>
                     <td>@contract.ContractValue</td>
                     <td>
-                        <a asp-action="Delete" asp-route-Id="@contract.Id" class="btn btn-danger"> Delete </a>
+                        <a asp-action="Delete" asp-route-Uuid="@contract.Uuid" class="btn btn-danger"> Delete </a>
                     </td>
                 </tr>
             }

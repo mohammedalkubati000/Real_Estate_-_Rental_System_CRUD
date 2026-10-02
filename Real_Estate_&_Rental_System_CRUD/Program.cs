@@ -11,8 +11,9 @@ var conectionString = builder.Configuration.GetConnectionString("DefaultConnecti
 builder.Services.AddDbContext<AppDbContext>(options =>
 options.UseSqlServer(conectionString));
 
-
+// ================================ 
 // Cookie Authentication 
+// ================================
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options => {

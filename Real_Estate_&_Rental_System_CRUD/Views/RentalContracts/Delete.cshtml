@@ -7,7 +7,7 @@
     <h1 class="text-danger">حذف وإلغاء عقد الإيجار</h1>
     <h3 class="text-muted mb-4">هل أنت متأكد من رغبتك في حذف هذا العقد بشكل نهائي؟ (سيتم إعادة العقار متاحاً تلقائياً)</h3>
 
-    <form asp-action="Delete" method="post">
+    <form asp-action="Delete" method="post" asp-route-Uuid="@Model.Uuid">
 
         <input type="hidden" asp-for="Id" />
 

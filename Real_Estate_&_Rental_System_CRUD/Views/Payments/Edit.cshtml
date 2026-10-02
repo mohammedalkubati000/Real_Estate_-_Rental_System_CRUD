@@ -5,7 +5,7 @@
 
 <div class="container">
     <h1>تعديل الدفعة المالية</h1>
-    <form asp-action="Edit" method="post">
+    <form asp-action="Edit" method="post" asp-route-Uuid="@Model.Uuid">
 
         <input type="hidden" asp-for="Id" />
 

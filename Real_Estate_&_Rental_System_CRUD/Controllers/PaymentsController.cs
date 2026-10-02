@@ -7,7 +7,7 @@ using Real_Estate___Rental_System_CRUD.Models;
 
 namespace Real_Estate___Rental_System_CRUD.Controllers
 {
-  //  [Authorize]
+    [Authorize]
     public class PaymentsController : Controller
     {
 
@@ -53,9 +53,9 @@ namespace Real_Estate___Rental_System_CRUD.Controllers
         //Edit
         
         [HttpGet]
-        public ActionResult Edit(int Id)
+        public ActionResult Edit(string Uuid)
         {
-            var payment = _db.Payments.Find(Id);
+            var payment = _db.Payments.FirstOrDefault(m => m.Uuid == Uuid);
             if (payment == null)
             {
                 return NotFound();
@@ -69,7 +69,18 @@ namespace Real_Estate___Rental_System_CRUD.Controllers
         {
             if (ModelState.IsValid)
             {
-                _db.Payments.Update(payment);
+                var oldPayment = _db.Payments.FirstOrDefault(m => m.Uuid == payment.Uuid);
+
+                if (oldPayment == null)
+
+                    return NotFound();
+                oldPayment.RentalContractId = payment.RentalContractId; 
+                oldPayment.AmountPaid = payment.AmountPaid;
+                oldPayment.PaymentDate = payment.PaymentDate;
+                oldPayment.PaymentMethod = payment.PaymentMethod;
+                oldPayment.Status = payment.Status;
+
+
                 _db.SaveChanges();
                 return RedirectToAction("Index");
             }

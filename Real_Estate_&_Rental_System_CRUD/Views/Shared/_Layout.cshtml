@@ -32,7 +32,11 @@
                         <li><a class="dropdown-item" href="#!">Settings</a></li>
                         <li><a class="dropdown-item" href="#!">Activity Log</a></li>
                         <li><hr class="dropdown-divider" /></li>
-                        <li><a class="dropdown-item" href="#!">Logout</a></li>
+                        <li>
+                        <form asp-controller="Accounts" asp-action="Logout">
+                            <button class="dropdown-item" type="submit">Logout</button>
+                        </form>>
+                        </li>
                     </ul>
                 </li>
             </ul>
@@ -49,7 +53,7 @@
                     <div class="sb-sidenav-menu">
                         <div class="nav">
                             <div class="sb-sidenav-menu-heading">Core</div>
-                        <a class="nav-link" href="index.html">
+                        <a class="nav-link" asp-controller="Home" asp-action="Index">
                                 <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
                                 الرئيسة
                             </a>
@@ -64,7 +68,7 @@
                             <div class="collapse" id="collapseLayouts" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
                                 <nav class="sb-sidenav-menu-nested nav">
                                     <a class="nav-link"  asp-controller="Properties" asp-action="Index">عرض العقارات</a>
-                                    <a class="nav-link" href="layout-sidenav-light.html">إضافة عقار جديد</a>
+                                 <!--   <a class="nav-link" href="layout-sidenav-light.html">إضافة عقار جديد</a> -->
                                 </nav>
                             </div>
                          
@@ -78,7 +82,7 @@
                             <div class="collapse" id="collapseTenants" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
                                 <nav class="sb-sidenav-menu-nested nav">
                                     <a class="nav-link" asp-controller="Tenants" asp-action="Index">  قائمة المستأجرين </a>
-                                    <a class="nav-link" href="layout-sidenav-light.html">إضافة مستأجر جديد</a>
+                                 <!--   <a class="nav-link" href="layout-sidenav-light.html">إضافة مستأجر جديد</a> -->
                                 </nav>
                             </div>
 
@@ -93,7 +97,7 @@
                             <div class="collapse" id="collapseContracts" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
                                 <nav class="sb-sidenav-menu-nested nav">
                                     <a class="nav-link" asp-controller="RentalContracts" asp-action="Index">قائمة العقود</a>
-                                    <a class="nav-link" href="layout-sidenav-light.html">إنشاء عقد جديد</a>
+                                 <!--   <a class="nav-link" href="layout-sidenav-light.html">إنشاء عقد جديد</a> -->
                                 </nav>
                             </div>
 
@@ -108,9 +112,25 @@
                             <div class="collapse" id="collapsePayments" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
                                 <nav class="sb-sidenav-menu-nested nav">
                                     <a class="nav-link" asp-controller="Payments" asp-action="Index"">سجل المدفوعات</a>
-                                    <a class="nav-link" href="layout-sidenav-light.html"> تسجيل سند جديد</a>
+                                <!--    <a class="nav-link" href="layout-sidenav-light.html"> تسجيل سند جديد</a> -->
                               </nav>
                             </div>
+
+                             <!---->
+                            <div class="sb-sidenav-menu-heading">Interface</div>
+                            <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseLayouts" aria-expanded="false" aria-controls="collapseLayouts">
+                                <div class="sb-nav-link-icon"><i class="fas fa-columns"></i></div>
+                                ادارة المستخدمين
+                                <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                            </a>
+                            <div class="collapse" id="collapseLayouts" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
+                                <nav class="sb-sidenav-menu-nested nav">
+                                    <a class="nav-link"  asp-controller="Users" asp-action="Index"> المستخدمين</a>
+                                    
+                                </nav>
+                            </div>
+                         
+                            <!---->
 <!--     
 
 
