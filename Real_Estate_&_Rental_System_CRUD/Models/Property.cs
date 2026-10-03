@@ -5,22 +5,22 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace Real_Estate___Rental_System_CRUD.Models
 {
     [Index(nameof(Uuid), IsUnique = true)]
-    public class Property
+    public class Property //ملكية
     {
         [Key]
         public int Id { get; set; }
 
         public string Uuid { get; set; } = Guid.NewGuid().ToString();
-        public string PropertyType { get; set; } 
+        public string PropertyType { get; set; } //نوع الملكية
 
         public string City { get; set; } 
 
         public string Address { get; set; } 
 
-        public decimal AnnualRent { get; set; }
+        public decimal AnnualRent { get; set; } //الإيجار السنوي
 
-        public bool IsAvailable { get; set; }
+        public bool IsAvailable { get; set; } = true;  //متاح او لا
 
-      
+
     }
 }

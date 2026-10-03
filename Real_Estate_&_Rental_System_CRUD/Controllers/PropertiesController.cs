@@ -107,11 +107,11 @@ namespace Real_Estate___Rental_System_CRUD.Controllers
         public ActionResult DeleteConfirmed(Property property)
         {
             var oldprop = _db.Properties.FirstOrDefault(m => m.Uuid == property.Uuid);
-            if (property == null)
+            if (oldprop == null)
             {
                 return NotFound();
             }
-            _db.Properties.Remove(property);
+            _db.Properties.Remove(oldprop);
             _db.SaveChanges();
             return RedirectToAction("Index");
         }

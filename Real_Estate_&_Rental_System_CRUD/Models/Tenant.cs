@@ -5,7 +5,7 @@ namespace Real_Estate___Rental_System_CRUD.Models
 {
     [Index(nameof(Uuid), IsUnique = true)]
     
-    public class Tenant
+    public class Tenant //Tenant = مستأجر  
     {
         [Key]
         public int Id { get; set; }

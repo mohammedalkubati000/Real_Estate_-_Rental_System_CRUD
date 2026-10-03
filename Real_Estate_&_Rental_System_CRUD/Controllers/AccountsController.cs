@@ -1,10 +1,12 @@
 ﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 using Real_Estate___Rental_System_CRUD.Data;
+using System.Security.Claims;
 namespace Real_Estate___Rental_System_CRUD.Controllers
 {
+    //[Authorize]
     public class AccountsController : Controller
     {
         
@@ -32,7 +34,7 @@ namespace Real_Estate___Rental_System_CRUD.Controllers
                 return NotFound();
             }
 
-            bool isPasswordCorrect = BCrypt.Net.BCrypt.Verify(password, user.Password);
+                    bool isPasswordCorrect = BCrypt.Net.BCrypt.Verify(password, user.Password);
 
 
             if (!isPasswordCorrect)
@@ -54,7 +56,7 @@ namespace Real_Estate___Rental_System_CRUD.Controllers
                 var claims = new List<Claim>
                 {
                     new Claim(ClaimTypes.Name, email),
-                    new Claim(ClaimTypes.NameIdentifier,"1")
+                    new Claim(ClaimTypes.NameIdentifier, user.Id.ToString())
                 };
                 var identity = new ClaimsIdentity(claims, "login");
                 var principal = new ClaimsPrincipal(identity);

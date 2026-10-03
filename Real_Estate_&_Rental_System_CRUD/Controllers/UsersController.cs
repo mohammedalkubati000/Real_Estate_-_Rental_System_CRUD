@@ -91,6 +91,7 @@ namespace Real_Estate___Rental_System_CRUD.Controllers
         [HttpPost]
         public IActionResult Edit(User user)
         {
+            ModelState.Remove("Password");// رفض العمليه اذا فاضي
             if (ModelState.IsValid)
             {
                 var oldUser = _db.Users.Find(user.Id);

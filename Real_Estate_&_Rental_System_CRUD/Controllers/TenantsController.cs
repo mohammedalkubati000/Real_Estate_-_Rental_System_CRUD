@@ -112,7 +112,7 @@ namespace Real_Estate___Rental_System_CRUD.Controllers
 
                 return NotFound();
             
-                _db.Tenants.Remove(tenant);
+                _db.Tenants.Remove(olddept);
                 _db.SaveChanges();
             return RedirectToAction("Index");
         }
