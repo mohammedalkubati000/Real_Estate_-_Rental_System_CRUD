@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 using Real_Estate___Rental_System_CRUD.Data;
 using Real_Estate___Rental_System_CRUD.Models;
 
@@ -30,11 +32,24 @@ namespace Real_Estate___Rental_System_CRUD.Controllers
 
         //Create
 
-        [HttpGet]
-        public ActionResult Create()
-        {
-            return View();
-        }
+        //AI Test the PropertyType
+        //private void LoadPropertyTypes(int? selectedId = null)
+        //{
+          //  ViewBag.PropertyTypeId = new SelectList(_db.PropertyType, "Id", "Name", selectedId);
+        //}
+
+            [HttpGet]
+            public ActionResult Create()
+            {
+                //LoadPropertyTypes();  //AI
+                // is on 
+
+                var PropertyType = _db.PropertyType.ToList();
+                SelectList selectList = new SelectList(PropertyType, "Id", "Name");
+                ViewBag.d = selectList;
+                return View();
+            }
+
 
         [HttpPost]
         public ActionResult Create(Property property)

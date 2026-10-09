@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Real_Estate___Rental_System_CRUD.Data;
 
@@ -11,9 +12,11 @@ using Real_Estate___Rental_System_CRUD.Data;
 namespace Real_Estate___Rental_System_CRUD.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20261009065419_AddPropertyType")]
+    partial class AddPropertyType
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -83,7 +86,11 @@ namespace Real_Estate___Rental_System_CRUD.Migrations
                     b.Property<bool>("IsAvailable")
                         .HasColumnType("bit");
 
-                    b.Property<int>("PropertyTypeId")
+                    b.Property<string>("PropertyType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("PropertyTypeId")
                         .HasColumnType("int");
 
                     b.Property<string>("Uuid")
@@ -237,13 +244,9 @@ namespace Real_Estate___Rental_System_CRUD.Migrations
 
             modelBuilder.Entity("Real_Estate___Rental_System_CRUD.Models.Property", b =>
                 {
-                    b.HasOne("Real_Estate___Rental_System_CRUD.Models.PropertyType", "PropertyType")
+                    b.HasOne("Real_Estate___Rental_System_CRUD.Models.PropertyType", null)
                         .WithMany("Properties")
-                        .HasForeignKey("PropertyTypeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("PropertyType");
+                        .HasForeignKey("PropertyTypeId");
                 });
 
             modelBuilder.Entity("Real_Estate___Rental_System_CRUD.Models.RentalContract", b =>

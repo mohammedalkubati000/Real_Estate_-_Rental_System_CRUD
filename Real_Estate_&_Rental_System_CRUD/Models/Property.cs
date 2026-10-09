@@ -11,8 +11,10 @@ namespace Real_Estate___Rental_System_CRUD.Models
         public int Id { get; set; }
 
         public string Uuid { get; set; } = Guid.NewGuid().ToString();
-        public string PropertyType { get; set; } //نوع الملكية
 
+        public int PropertyTypeId { get; set; }
+       // public string PropertyType { get; set; } //نوع الملكية
+        public PropertyType? PropertyType { get; set; }
         public string City { get; set; } 
 
         public string Address { get; set; } 
