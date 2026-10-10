@@ -1,4 +1,5 @@
-﻿@model IEnumerable<Real_Estate___Rental_System_CRUD.Models.Property>
+﻿@using Real_Estate___Rental_System_CRUD.Dtos
+@model IEnumerable<PropertyDto>
 
 <div class="container">
 
@@ -25,10 +26,10 @@
             {
                 <tr>
                     <td>@property.Id</td>
-                    <td>@property.PropertyType</td>
+                    <td>@property.PropertyTypeName</td>
                     <td>@property.City</td>
-                    <td>@property.Address</td>
-                    <td>@property.AnnualRent</td>
+                     <td>@property.Address</td>  
+                     <td>@property.AnnualRent</td>
                     <td>
                         <span class="badge @(property.IsAvailable ? "bg-success" : "bg-danger")">
                             @(property.IsAvailable ? "متاح" : "مؤجر")

@@ -58,9 +58,18 @@ namespace Real_Estate___Rental_System_CRUD.Controllers
             ModelState.AddModelError("", "Please fill all the required fields.");
             return View(contract);
         }
-        private void LoadDropdowns()
+        private void LoadDropdowns() // سوال
         {
-            ViewBag.PropertyId = new SelectList(_db.Properties.Where(p => p.IsAvailable), "Id", "Address");
+            var props = _db.Properties
+            .Include(p => p.PropertyType)
+            .Where(p => p.IsAvailable)
+            .Select(p => new
+       {
+             p.Id,
+             Text = p.PropertyType!.Name + " - " + p.City + " - " + p.Address
+       })
+           .ToList();
+            ViewBag.PropertyId = new SelectList(props, "Id", "Text");
             ViewBag.TenantId = new SelectList(_db.Tenants, "Id", "FullName");
         }
 

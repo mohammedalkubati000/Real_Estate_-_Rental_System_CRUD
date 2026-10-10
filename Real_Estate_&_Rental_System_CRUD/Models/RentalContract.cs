@@ -24,5 +24,8 @@ namespace Real_Estate___Rental_System_CRUD.Models
 
         public decimal ContractValue { get; set; }  // قيمة العقد
 
+        [NotMapped] // لازم احلها
+        public string DisplayName => "عقد #" + Id + " - " + Tenant?.FullName;
+
     }
 }

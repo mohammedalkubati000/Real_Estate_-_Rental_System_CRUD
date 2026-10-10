@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Real_Estate___Rental_System_CRUD.Data;
 using Real_Estate___Rental_System_CRUD.Models;
+using System.ComponentModel.DataAnnotations.Schema;
+
 
 namespace Real_Estate___Rental_System_CRUD.Controllers
 {
@@ -24,15 +26,22 @@ namespace Real_Estate___Rental_System_CRUD.Controllers
             IEnumerable<Payment> payments = _db.Payments.Include(p => p.RentalContract)
             .ThenInclude(c => c.Tenant).ToList();
             return View(payments);
+            
         }
 
         
         [HttpGet]
         public ActionResult Create()
         {
-            
+            IEnumerable<RentalContract> contracts = _db.RentalContracts
+            .Include(c => c.Tenant)
+            .ToList();
+            ViewBag.RentalContractId = new SelectList(contracts, "Id", "DisplayName");
             return View();
+          
+            
         }
+
 
         [HttpPost]
         public ActionResult Create(Payment payment)

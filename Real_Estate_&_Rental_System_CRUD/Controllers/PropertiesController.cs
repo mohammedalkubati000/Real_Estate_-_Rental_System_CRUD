@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Real_Estate___Rental_System_CRUD.Data;
+using Real_Estate___Rental_System_CRUD.Dtos;
 using Real_Estate___Rental_System_CRUD.Models;
 
 namespace Real_Estate___Rental_System_CRUD.Controllers
@@ -22,12 +23,34 @@ namespace Real_Estate___Rental_System_CRUD.Controllers
         //Index
 
         //////
+
         public ActionResult Index()
         {
-            IEnumerable<Property> properties = _db.Properties.ToList();
+            IEnumerable<PropertyDto> properties = _db.Properties.Select(e => new PropertyDto
+            {
+                // mapping the properties of properties  to PropertyDto
+                Id = e.Id,
+               PropertyTypeId = e.PropertyTypeId,
+               PropertyTypeName = e.PropertyType!.Name,
+               City = e.City,
+               Address = e.Address,
+               AnnualRent = e.AnnualRent,
+               IsAvailable = e.IsAvailable,
+               // PropertyTypeName = e.PropertyType != null ? e.PropertyType.Name : null,
+            }).ToList();
             return View(properties);
-            
+
         }
+
+
+       // public ActionResult Index()
+        //{
+          //  IEnumerable<Property> properties = _db.Properties
+            //    .Include(p => p.PropertyType)
+              //  .ToList();
+          //  return View(properties);
+            
+       // }
 
 
         //Create
