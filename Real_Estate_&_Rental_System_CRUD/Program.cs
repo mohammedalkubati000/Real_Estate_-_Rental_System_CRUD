@@ -1,7 +1,8 @@
+using BCrypt.Net;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 using Real_Estate___Rental_System_CRUD.Data;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using BCrypt.Net;
+using Real_Estate___Rental_System_CRUD.Repositories;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -20,6 +21,8 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.LoginPath = "/Accounts/Login";
         options.AccessDeniedPath = "/Accounts/AccessDenied";
     });
+
+builder.Services.AddScoped<IPropertyRepository, PropertyRepository>();
 
 var app = builder.Build();
 
