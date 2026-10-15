@@ -75,16 +75,25 @@ namespace Real_Estate___Rental_System_CRUD.Controllers
 
 
         [HttpPost]
-        public ActionResult Create(Property property)
+        public ActionResult Create(PropertyCreateDto propertydto)
         {
             if (ModelState.IsValid)
             {
+                // Mapping the properties of the PropertyCreateDto to property
+                var property = new Property
+                {
+                    PropertyTypeId = propertydto.PropertyTypeId,
+                    City = propertydto.City,
+                    Address = propertydto.Address,
+                    AnnualRent = propertydto.AnnualRent
+                };
+
                 _db.Properties.Add(property);
                 _db.SaveChanges();
                 return RedirectToAction("Index");
             }
             ModelState.AddModelError("", "Please fill all the required fields.");
-            return View(property);
+            return View(propertydto);
         }
 
 
@@ -103,26 +112,28 @@ namespace Real_Estate___Rental_System_CRUD.Controllers
         }
 
         [HttpPost]
-        public ActionResult Edit(Property property)
+        public ActionResult Edit(PropertyUpdateDto propertydto)
         {
             if (ModelState.IsValid)
             {
-                var oldProperty = _db.Properties.FirstOrDefault(m => m.Uuid == property.Uuid);
+                var oldProperty = _db.Properties.FirstOrDefault(m => m.Uuid == propertydto.Uuid);
                 
                 if (oldProperty == null)
 
                     return NotFound();
-                oldProperty.PropertyType = property.PropertyType;
-                oldProperty.City = property.City;
-                oldProperty.Address = property.Address;
-                oldProperty.AnnualRent = property.AnnualRent;
+                // Mapping the properties of the PropertyCreateDto to property
+
+                oldProperty.PropertyTypeId = propertydto.PropertyTypeId;
+                oldProperty.City = propertydto.City;
+                oldProperty.Address = propertydto.Address;
+                oldProperty.AnnualRent = propertydto.AnnualRent;
 
                
                 _db.SaveChanges();
                 return RedirectToAction("Index");
             }
             ModelState.AddModelError("", "Please fill all the required fields.");
-            return View(property);
+            return View(propertydto);
         }
 
 
@@ -142,9 +153,9 @@ namespace Real_Estate___Rental_System_CRUD.Controllers
 
         [HttpPost]
         [ActionName("Delete")]
-        public ActionResult DeleteConfirmed(Property property)
+        public ActionResult DeleteConfirmed(PropertyUpdateDto propertydto)
         {
-            var oldprop = _db.Properties.FirstOrDefault(m => m.Uuid == property.Uuid);
+            var oldprop = _db.Properties.FirstOrDefault(m => m.Uuid == propertydto.Uuid);
             if (oldprop == null)
             {
                 return NotFound();
