@@ -2,18 +2,27 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Real_Estate___Rental_System_CRUD.Data;
+using Real_Estate___Rental_System_CRUD.Repositories;
 using System.Security.Claims;
+
 namespace Real_Estate___Rental_System_CRUD.Controllers
 {
     //[Authorize]
     public class AccountsController : Controller
     {
+        // === Old DbContext Reference (Commented Out) ===
+        // private readonly AppDbContext _db;
+        // public AccountsController(AppDbContext db)
+        // {
+        //     _db = db;
+        // }
 
-        private readonly AppDbContext _db;
-        public AccountsController(AppDbContext db)
+        // === New Repository Pattern Injection ===
+        private readonly IUserRepository _userRepository;
+
+        public AccountsController(IUserRepository userRepository)
         {
-            _db = db;
+            _userRepository = userRepository;
         }
 
         //////
@@ -25,10 +34,16 @@ namespace Real_Estate___Rental_System_CRUD.Controllers
         {
             return View();
         }
+
         [HttpPost]
         public async Task<IActionResult> LoginConfirm(string email, string password)
         {
-            var user = _db.Users.FirstOrDefault(x => x.Email == email);
+            // === Old DbContext Code (Commented Out) ===
+            // var user = _db.Users.FirstOrDefault(x => x.Email == email);
+
+            // === New Repository Code ===
+            var user = await _userRepository.GetUserByEmailAsync(email);
+
             if (user == null)
             {
                 return NotFound();
@@ -36,36 +51,30 @@ namespace Real_Estate___Rental_System_CRUD.Controllers
 
             bool isPasswordCorrect = BCrypt.Net.BCrypt.Verify(password, user.Password);
 
-
             if (!isPasswordCorrect)
             {
                 ModelState.AddModelError("", "Invalid Email or Password");
                 return View("Login");
             }
+
             //if (user.IsLocked)
             //{
             //    ModelState.AddModelError("", "Your account is locked");
             //    return View("Login");
             //}
 
-
-
-
-
-
             var claims = new List<Claim>
-                {
-                    new Claim(ClaimTypes.Name, email),
-                    new Claim(ClaimTypes.NameIdentifier, user.Id.ToString())
-                };
+            {
+                new Claim(ClaimTypes.Name, email),
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString())
+            };
+
             var identity = new ClaimsIdentity(claims, "login");
             var principal = new ClaimsPrincipal(identity);
             await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
+
             return RedirectToAction("Index", "Home");
-
-
         }
-
 
         //////
 
@@ -78,13 +87,6 @@ namespace Real_Estate___Rental_System_CRUD.Controllers
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             return RedirectToAction("Login");
         }
-
-
-
-
-
-
-
 
         ////
         //[HttpPost]
@@ -111,6 +113,5 @@ namespace Real_Estate___Rental_System_CRUD.Controllers
         //    await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
         //    return RedirectToAction("Login");
         //}
-
     }
 }

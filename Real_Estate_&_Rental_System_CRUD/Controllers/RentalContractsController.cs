@@ -4,90 +4,94 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Real_Estate___Rental_System_CRUD.Data;
 using Real_Estate___Rental_System_CRUD.Models;
+using Real_Estate___Rental_System_CRUD.Repositories;
 
 namespace Real_Estate___Rental_System_CRUD.Controllers
 {
     [Authorize]
     public class RentalContractsController : Controller
     {
-        private readonly AppDbContext _db;
+        // === Old DbContext Reference (Commented Out) ===
+        // private readonly AppDbContext _db;
+        // public RentalContractsController(AppDbContext db)
+        // {
+        //     _db = db;
+        // }
 
-        public RentalContractsController(AppDbContext db)
+        // === New Repository Pattern Injection ===
+        private readonly IRentalContractRepository _contractRepository;
+        private readonly IPropertyRepository _propertyRepository;
+        private readonly ITenantRepository _tenantRepository;
+
+        public RentalContractsController(
+            IRentalContractRepository contractRepository,
+            IPropertyRepository propertyRepository,
+            ITenantRepository tenantRepository)
         {
-            _db = db;
+            _contractRepository = contractRepository;
+            _propertyRepository = propertyRepository;
+            _tenantRepository = tenantRepository;
         }
 
-        //////
-
-        //Index
-
-        //////
-
-        public ActionResult Index()
+        // GET: RentalContracts
+        public async Task<IActionResult> Index()
         {
+            // === Old DbContext Code (Commented Out) ===
+            // IEnumerable<RentalContract> contracts = _db.RentalContracts
+            //     .Include(c => c.Property)
+            //     .Include(c => c.Tenant)
+            //     .ToList();
+            // return View(contracts);
 
-            IEnumerable<RentalContract> contracts = _db.RentalContracts
-                .Include(c => c.Property)
-                .Include(c => c.Tenant)
-                .ToList();
+            // === New Repository Code ===
+            var contracts = await _contractRepository.GetAllContractsAsync();
             return View(contracts);
         }
 
+        // GET: RentalContracts/Create
         [HttpGet]
-        public ActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            LoadDropdowns();
+            await LoadDropdownsAsync();
             return View();
         }
 
+        // POST: RentalContracts/Create
         [HttpPost]
-        public ActionResult Create(RentalContract contract)
+        public async Task<IActionResult> Create(RentalContract contract)
         {
             if (ModelState.IsValid)
             {
-                _db.RentalContracts.Add(contract);
+                // === Old DbContext Code (Commented Out) ===
+                // _db.RentalContracts.Add(contract);
+                // var property = _db.Properties.Find(contract.PropertyId);
+                // if (property != null) property.IsAvailable = false;
+                // _db.SaveChanges();
 
-                var property = _db.Properties.Find(contract.PropertyId);
-                if (property != null) property.IsAvailable = false;
-
-                _db.SaveChanges();
-                return RedirectToAction("Index");
+                // === New Repository Code ===
+                await _contractRepository.AddContractAsync(contract);
+                return RedirectToAction(nameof(Index));
             }
 
-            LoadDropdowns();
+            await LoadDropdownsAsync();
             ModelState.AddModelError("", "Please fill all the required fields.");
             return View(contract);
         }
-        private void LoadDropdowns() // سوال
-        {
-            var props = _db.Properties
-            .Include(p => p.PropertyType)
-            .Where(p => p.IsAvailable)
-            .Select(p => new
-       {
-             p.Id,
-             Text = p.PropertyType!.Name + " - " + p.City + " - " + p.Address
-       })
-           .ToList();
-            ViewBag.PropertyId = new SelectList(props, "Id", "Text");
-            ViewBag.TenantId = new SelectList(_db.Tenants, "Id", "FullName");
-        }
 
-
-
-
-        //===============
-        //Delete
-        //===============
+        // GET: RentalContracts/Delete/{Uuid}
         [HttpGet]
-        public ActionResult Delete(string Uuid)
+        public async Task<IActionResult> Delete(string Uuid)
         {
             if (string.IsNullOrEmpty(Uuid)) return NotFound();
 
-            var contract = _db.RentalContracts
-                .Include(c => c.Property)
-                .Include(c => c.Tenant)
-                .FirstOrDefault(c => c.Uuid == Uuid);
+            // === Old DbContext Code (Commented Out) ===
+            // var contract = _db.RentalContracts
+            //     .Include(c => c.Property)
+            //     .Include(c => c.Tenant)
+            //     .FirstOrDefault(c => c.Uuid == Uuid);
+
+            // === New Repository Code ===
+            var contract = await _contractRepository.GetContractByUuidAsync(Uuid);
 
             if (contract == null)
             {
@@ -96,23 +100,60 @@ namespace Real_Estate___Rental_System_CRUD.Controllers
             return View(contract);
         }
 
+        // POST: RentalContracts/Delete
         [HttpPost]
-        [ActionName("Delete")] 
-        public ActionResult DeleteConfirmed(RentalContract rentalContract)
+        [ActionName("Delete")]
+        public async Task<IActionResult> DeleteConfirmed(RentalContract rentalContract)
         {
-            var oldCon = _db.RentalContracts.FirstOrDefault(m => m.Uuid == rentalContract.Uuid);
-            if (oldCon != null)
+            // === Old DbContext Code (Commented Out) ===
+            // var oldCon = _db.RentalContracts.FirstOrDefault(m => m.Uuid == rentalContract.Uuid);
+            // if (oldCon != null)
+            // {
+            //     var property = _db.Properties.Find(oldCon.PropertyId);
+            //     if (property != null) property.IsAvailable = true;
+            //     _db.RentalContracts.Remove(oldCon);
+            //     _db.SaveChanges();
+            // }
+
+            // === New Repository Code ===
+            if (!string.IsNullOrEmpty(rentalContract.Uuid))
             {
-
-                var property = _db.Properties.Find(oldCon.PropertyId);
-                if (property != null) property.IsAvailable = true;
-
-                _db.RentalContracts.Remove(oldCon);
-                _db.SaveChanges();
-
+                await _contractRepository.DeleteContractAsync(rentalContract.Uuid);
             }
-            return RedirectToAction("Index");
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        // === Helper Method for Dropdowns ===
+        private async Task LoadDropdownsAsync()
+        {
+            // === Old DbContext Code (Commented Out) ===
+            // var props = _db.Properties
+            // .Include(p => p.PropertyType)
+            // .Where(p => p.IsAvailable)
+            // .Select(p => new
+            // {
+            //      p.Id,
+            //      Text = p.PropertyType!.Name + " - " + p.City + " - " + p.Address
+            // })
+            // .ToList();
+            // ViewBag.PropertyId = new SelectList(props, "Id", "Text");
+            // ViewBag.TenantId = new SelectList(_db.Tenants, "Id", "FullName");
+
+            // === New Repository Code ===
+            var allProperties = await _propertyRepository.GetAllPropertiesAsync();
+            var availableProperties = allProperties
+                .Where(p => p.IsAvailable)
+                .Select(p => new
+                {
+                    p.Id,
+                    Text = (p.PropertyType != null ? p.PropertyType.Name : "") + " - " + p.City + " - " + p.Address
+                });
+
+            var tenants = await _tenantRepository.GetAllTenantsAsync();
+
+            ViewBag.PropertyId = new SelectList(availableProperties, "Id", "Text");
+            ViewBag.TenantId = new SelectList(tenants, "Id", "FullName");
         }
     }
 }
-
