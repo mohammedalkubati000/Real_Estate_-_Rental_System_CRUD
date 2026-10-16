@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Real_Estate___Rental_System_CRUD.Models;
 using Real_Estate___Rental_System_CRUD.Repositories;
+using Real_Estate___Rental_System_CRUD.Repositories.Base;
 
 namespace Real_Estate___Rental_System_CRUD.Controllers
 {
@@ -15,12 +16,20 @@ namespace Real_Estate___Rental_System_CRUD.Controllers
         //     _db = db;
         // }
 
-        // === New Repository Pattern Injection ===
-        private readonly IUserRepository _userRepository;
+        // === Old Repository Pattern Injection (Commented Out) ===
+        // private readonly IUserRepository _userRepository;
 
-        public UsersController(IUserRepository userRepository)
+        // public UsersController(IUserRepository userRepository)
+        // {
+        //     _userRepository = userRepository;
+        // }
+
+        // === New UnitOfWork Injection ===
+        private readonly IUnitOfWork _unitOfWork;
+
+        public UsersController(IUnitOfWork unitOfWork)
         {
-            _userRepository = userRepository;
+            _unitOfWork = unitOfWork;
         }
 
         // =========================
@@ -32,8 +41,11 @@ namespace Real_Estate___Rental_System_CRUD.Controllers
             // var users = _db.Users.ToList();
             // return View(users);
 
-            // === New Repository Code ===
-            var users = await _userRepository.GetAllUsersAsync();
+            // === Old Repository Code (Commented Out) ===
+            // var users = await _userRepository.GetAllUsersAsync();
+
+            // === New Repository Code via UnitOfWork ===
+            var users = await _unitOfWork.UserRepository.GetAllUsersAsync();
             return View(users);
         }
 
@@ -45,8 +57,8 @@ namespace Real_Estate___Rental_System_CRUD.Controllers
             // === Old DbContext Code (Commented Out) ===
             // var user = _db.Users.Find(id);
 
-            // === New Repository Code ===
-            var user = await _userRepository.GetUserByIdAsync(id);
+            // === New Repository Code via UnitOfWork ===
+            var user = await _unitOfWork.UserRepository.GetUserByIdAsync(id);
 
             if (user == null)
                 return NotFound();
@@ -76,8 +88,8 @@ namespace Real_Estate___Rental_System_CRUD.Controllers
                 // _db.Users.Add(user);
                 // _db.SaveChanges();
 
-                // === New Repository Code ===
-                await _userRepository.AddUserAsync(user);
+                // === New Repository Code via UnitOfWork ===
+                await _unitOfWork.UserRepository.AddUserAsync(user);
 
                 return RedirectToAction(nameof(Index));
             }
@@ -93,8 +105,8 @@ namespace Real_Estate___Rental_System_CRUD.Controllers
             // === Old DbContext Code (Commented Out) ===
             // var user = _db.Users.Find(id);
 
-            // === New Repository Code ===
-            var user = await _userRepository.GetUserByIdAsync(id);
+            // === New Repository Code via UnitOfWork ===
+            var user = await _unitOfWork.UserRepository.GetUserByIdAsync(id);
 
             if (user == null)
                 return NotFound();
@@ -125,8 +137,8 @@ namespace Real_Estate___Rental_System_CRUD.Controllers
                 // }
                 // _db.SaveChanges();
 
-                // === New Repository Code ===
-                var oldUser = await _userRepository.GetUserByIdAsync(user.Id);
+                // === New Repository Code via UnitOfWork ===
+                var oldUser = await _unitOfWork.UserRepository.GetUserByIdAsync(user.Id);
 
                 if (oldUser == null)
                     return NotFound();
@@ -141,7 +153,7 @@ namespace Real_Estate___Rental_System_CRUD.Controllers
                     oldUser.Password = BCrypt.Net.BCrypt.HashPassword(user.Password);
                 }
 
-                await _userRepository.UpdateUserAsync(oldUser);
+                await _unitOfWork.UserRepository.UpdateUserAsync(oldUser);
 
                 return RedirectToAction(nameof(Index));
             }
@@ -157,8 +169,8 @@ namespace Real_Estate___Rental_System_CRUD.Controllers
             // === Old DbContext Code (Commented Out) ===
             // var user = _db.Users.Find(id);
 
-            // === New Repository Code ===
-            var user = await _userRepository.GetUserByIdAsync(id);
+            // === New Repository Code via UnitOfWork ===
+            var user = await _unitOfWork.UserRepository.GetUserByIdAsync(id);
 
             if (user == null)
                 return NotFound();
@@ -178,13 +190,13 @@ namespace Real_Estate___Rental_System_CRUD.Controllers
             // _db.Users.Remove(user);
             // _db.SaveChanges();
 
-            // === New Repository Code ===
-            var user = await _userRepository.GetUserByIdAsync(id);
+            // === New Repository Code via UnitOfWork ===
+            var user = await _unitOfWork.UserRepository.GetUserByIdAsync(id);
 
             if (user == null)
                 return NotFound();
 
-            await _userRepository.DeleteUserAsync(id);
+            await _unitOfWork.UserRepository.DeleteUserAsync(id);
 
             return RedirectToAction(nameof(Index));
         }

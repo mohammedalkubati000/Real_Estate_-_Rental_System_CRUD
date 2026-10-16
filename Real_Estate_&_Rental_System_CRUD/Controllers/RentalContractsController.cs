@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Real_Estate___Rental_System_CRUD.Data;
 using Real_Estate___Rental_System_CRUD.Models;
 using Real_Estate___Rental_System_CRUD.Repositories;
+using Real_Estate___Rental_System_CRUD.Repositories.Base;
 
 namespace Real_Estate___Rental_System_CRUD.Controllers
 {
@@ -18,19 +19,27 @@ namespace Real_Estate___Rental_System_CRUD.Controllers
         //     _db = db;
         // }
 
-        // === New Repository Pattern Injection ===
-        private readonly IRentalContractRepository _contractRepository;
-        private readonly IPropertyRepository _propertyRepository;
-        private readonly ITenantRepository _tenantRepository;
+        // === Old Repository Pattern Injection (Commented Out) ===
+        // private readonly IRentalContractRepository _contractRepository;
+        // private readonly IPropertyRepository _propertyRepository;
+        // private readonly ITenantRepository _tenantRepository;
 
-        public RentalContractsController(
-            IRentalContractRepository contractRepository,
-            IPropertyRepository propertyRepository,
-            ITenantRepository tenantRepository)
+        // public RentalContractsController(
+        //      IRentalContractRepository contractRepository,
+        //      IPropertyRepository propertyRepository,
+        //      ITenantRepository tenantRepository)
+        //  {
+        //       _contractRepository = contractRepository;
+        //     _propertyRepository = propertyRepository;
+        //       _tenantRepository = tenantRepository;
+        //   }
+
+        // === New UnitOfWork Injection ===
+        private readonly IUnitOfWork _unitOfWork;
+
+        public RentalContractsController(IUnitOfWork unitOfWork)
         {
-            _contractRepository = contractRepository;
-            _propertyRepository = propertyRepository;
-            _tenantRepository = tenantRepository;
+            _unitOfWork = unitOfWork;
         }
 
         // GET: RentalContracts
@@ -43,8 +52,8 @@ namespace Real_Estate___Rental_System_CRUD.Controllers
             //     .ToList();
             // return View(contracts);
 
-            // === New Repository Code ===
-            var contracts = await _contractRepository.GetAllContractsAsync();
+            // === New Repository Code via UnitOfWork ===
+            var contracts = await _unitOfWork.RentalContractRepository.GetAllContractsAsync();
             return View(contracts);
         }
 
@@ -68,8 +77,8 @@ namespace Real_Estate___Rental_System_CRUD.Controllers
                 // if (property != null) property.IsAvailable = false;
                 // _db.SaveChanges();
 
-                // === New Repository Code ===
-                await _contractRepository.AddContractAsync(contract);
+                // === New Repository Code via UnitOfWork ===
+                await _unitOfWork.RentalContractRepository.AddContractAsync(contract);
                 return RedirectToAction(nameof(Index));
             }
 
@@ -90,8 +99,8 @@ namespace Real_Estate___Rental_System_CRUD.Controllers
             //     .Include(c => c.Tenant)
             //     .FirstOrDefault(c => c.Uuid == Uuid);
 
-            // === New Repository Code ===
-            var contract = await _contractRepository.GetContractByUuidAsync(Uuid);
+            // === New Repository Code via UnitOfWork ===
+            var contract = await _unitOfWork.RentalContractRepository.GetContractByUuidAsync(Uuid);
 
             if (contract == null)
             {
@@ -115,10 +124,10 @@ namespace Real_Estate___Rental_System_CRUD.Controllers
             //     _db.SaveChanges();
             // }
 
-            // === New Repository Code ===
+            // === New Repository Code via UnitOfWork ===
             if (!string.IsNullOrEmpty(rentalContract.Uuid))
             {
-                await _contractRepository.DeleteContractAsync(rentalContract.Uuid);
+                await _unitOfWork.RentalContractRepository.DeleteContractAsync(rentalContract.Uuid);
             }
 
             return RedirectToAction(nameof(Index));
@@ -140,8 +149,8 @@ namespace Real_Estate___Rental_System_CRUD.Controllers
             // ViewBag.PropertyId = new SelectList(props, "Id", "Text");
             // ViewBag.TenantId = new SelectList(_db.Tenants, "Id", "FullName");
 
-            // === New Repository Code ===
-            var allProperties = await _propertyRepository.GetAllPropertiesAsync();
+            // === New Repository Code via UnitOfWork ===
+            var allProperties = await _unitOfWork.PropertyRepository.GetAllPropertiesAsync();
             var availableProperties = allProperties
                 .Where(p => p.IsAvailable)
                 .Select(p => new
@@ -150,7 +159,7 @@ namespace Real_Estate___Rental_System_CRUD.Controllers
                     Text = (p.PropertyType != null ? p.PropertyType.Name : "") + " - " + p.City + " - " + p.Address
                 });
 
-            var tenants = await _tenantRepository.GetAllTenantsAsync();
+            var tenants = await _unitOfWork.TenantRepository.GetAllTenantsAsync();
 
             ViewBag.PropertyId = new SelectList(availableProperties, "Id", "Text");
             ViewBag.TenantId = new SelectList(tenants, "Id", "FullName");

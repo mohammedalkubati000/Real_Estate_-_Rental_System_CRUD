@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore;
 using Real_Estate___Rental_System_CRUD.Models;
 using Real_Estate___Rental_System_CRUD.Data;
 using Real_Estate___Rental_System_CRUD.Repositories;
+using Real_Estate___Rental_System_CRUD.Dtos;
+using Real_Estate___Rental_System_CRUD.Repositories.Base;
 
 namespace Real_Estate___Rental_System_CRUD.Controllers
 {
@@ -15,12 +17,19 @@ namespace Real_Estate___Rental_System_CRUD.Controllers
         //     _context = context;
         // }
 
-        // === New Repository Pattern Injection ===
-        private readonly IPropertyTypeRepository _propertyTypeRepository;
+        // === Old Repository Pattern Injection (Commented Out) ===
+        // private readonly IPropertyTypeRepository _propertyTypeRepository;
+        // public PropertyTypesController(IPropertyTypeRepository propertyTypeRepository)
+        // {
+        //     _propertyTypeRepository = propertyTypeRepository;
+        // }
 
-        public PropertyTypesController(IPropertyTypeRepository propertyTypeRepository)
+        // === New UnitOfWork Injection ===
+        private readonly IUnitOfWork _unitOfWork;
+
+        public PropertyTypesController(IUnitOfWork unitOfWork)
         {
-            _propertyTypeRepository = propertyTypeRepository;
+            _unitOfWork = unitOfWork;
         }
 
         // GET: PROPERTYTYPES
@@ -31,8 +40,11 @@ namespace Real_Estate___Rental_System_CRUD.Controllers
             // return View(properties);
             // return View(await _context.PropertyType.ToListAsync());
 
-            // === New Repository Code ===
-            var properties = await _propertyTypeRepository.GetAllPropertyTypesAsync();
+            // === Old Repository Code (Commented Out) ===
+            // var properties = await _propertyTypeRepository.GetAllPropertyTypesAsync();
+
+            // === New Repository Code via UnitOfWork ===
+            var properties = await _unitOfWork.PropertyTypeRepository.GetAllPropertyTypesAsync();
             return View(properties);
         }
 
@@ -48,8 +60,11 @@ namespace Real_Estate___Rental_System_CRUD.Controllers
             // var propertytype = await _context.PropertyType
             //     .FirstOrDefaultAsync(m => m.Id == id);
 
-            // === New Repository Code ===
-            var propertytype = await _propertyTypeRepository.GetPropertyTypeByIdAsync(id.Value);
+            // === Old Repository Code (Commented Out) ===
+            // var propertytype = await _propertyTypeRepository.GetPropertyTypeByIdAsync(id.Value);
+
+            // === New Repository Code via UnitOfWork ===
+            var propertytype = await _unitOfWork.PropertyTypeRepository.GetPropertyTypeByIdAsync(id.Value);
 
             if (propertytype == null)
             {
@@ -76,8 +91,11 @@ namespace Real_Estate___Rental_System_CRUD.Controllers
                 // _context.Add(propertytype);
                 // await _context.SaveChangesAsync();
 
-                // === New Repository Code ===
-                await _propertyTypeRepository.AddPropertyTypeAsync(propertytype);
+                // === Old Repository Code (Commented Out) ===
+                // await _propertyTypeRepository.AddPropertyTypeAsync(propertytype);
+
+                // === New Repository Code via UnitOfWork ===
+                await _unitOfWork.PropertyTypeRepository.AddPropertyTypeAsync(propertytype);
 
                 return RedirectToAction(nameof(Index));
             }
@@ -95,8 +113,11 @@ namespace Real_Estate___Rental_System_CRUD.Controllers
             // === Old DbContext Code (Commented Out) ===
             // var propertytype = await _context.PropertyType.FindAsync(id);
 
-            // === New Repository Code ===
-            var propertytype = await _propertyTypeRepository.GetPropertyTypeByIdAsync(id.Value);
+            // === Old Repository Code (Commented Out) ===
+            // var propertytype = await _propertyTypeRepository.GetPropertyTypeByIdAsync(id.Value);
+
+            // === New Repository Code via UnitOfWork ===
+            var propertytype = await _unitOfWork.PropertyTypeRepository.GetPropertyTypeByIdAsync(id.Value);
 
             if (propertytype == null)
             {
@@ -107,40 +128,17 @@ namespace Real_Estate___Rental_System_CRUD.Controllers
 
         // POST: PROPERTYTYPES/Edit/5
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int? id, [Bind("Id,Name,Properties")] PropertyType propertytype)
+        public async Task<IActionResult> Edit(PropertyType propertyType)
         {
-            if (id != propertytype.Id)
-            {
-                return NotFound();
-            }
-
             if (ModelState.IsValid)
             {
-                // === Old DbContext Code (Commented Out) ===
-                // try
-                // {
-                //     _context.Update(propertytype);
-                //     await _context.SaveChangesAsync();
-                // }
-                // catch (DbUpdateConcurrencyException)
-                // {
-                //     if (!PropertyTypeExists(propertytype.Id))
-                //     {
-                //         return NotFound();
-                //     }
-                //     else
-                //     {
-                //         throw;
-                //     }
-                // }
-
-                // === New Repository Code ===
-                await _propertyTypeRepository.UpdatePropertyTypeAsync(propertytype);
-
+                // === New Repository Code via UnitOfWork ===
+                await _unitOfWork.PropertyTypeRepository.UpdatePropertyTypeAsync(propertyType);
                 return RedirectToAction(nameof(Index));
             }
-            return View(propertytype);
+
+            ModelState.AddModelError("", "Please fill all the required fields.");
+            return View(propertyType);
         }
 
         // GET: PROPERTYTYPES/Delete/5
@@ -155,8 +153,11 @@ namespace Real_Estate___Rental_System_CRUD.Controllers
             // var propertytype = await _context.PropertyType
             //     .FirstOrDefaultAsync(m => m.Id == id);
 
-            // === New Repository Code ===
-            var propertytype = await _propertyTypeRepository.GetPropertyTypeByIdAsync(id.Value);
+            // === Old Repository Code (Commented Out) ===
+            // var propertytype = await _propertyTypeRepository.GetPropertyTypeByIdAsync(id.Value);
+
+            // === New Repository Code via UnitOfWork ===
+            var propertytype = await _unitOfWork.PropertyTypeRepository.GetPropertyTypeByIdAsync(id.Value);
 
             if (propertytype == null)
             {
@@ -184,8 +185,11 @@ namespace Real_Estate___Rental_System_CRUD.Controllers
             // }
             // await _context.SaveChangesAsync();
 
-            // === New Repository Code ===
-            await _propertyTypeRepository.DeletePropertyTypeAsync(id.Value);
+            // === Old Repository Code (Commented Out) ===
+            // await _propertyTypeRepository.DeletePropertyTypeAsync(id.Value);
+
+            // === New Repository Code via UnitOfWork ===
+            await _unitOfWork.PropertyTypeRepository.DeletePropertyTypeAsync(id.Value);
 
             return RedirectToAction(nameof(Index));
         }

@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Real_Estate___Rental_System_CRUD.Data;
 using Real_Estate___Rental_System_CRUD.Models;
 using Real_Estate___Rental_System_CRUD.Repositories;
+using Real_Estate___Rental_System_CRUD.Repositories.Base;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Real_Estate___Rental_System_CRUD.Controllers
@@ -19,16 +20,22 @@ namespace Real_Estate___Rental_System_CRUD.Controllers
         //     _db = db;
         // }
 
-        // === New Repository Pattern Injection ===
-        private readonly IPaymentRepository _paymentRepository;
-        private readonly IRentalContractRepository _contractRepository;
+        // === Old Repository Pattern Injection (Commented Out) ===
+        // private readonly IPaymentRepository _paymentRepository;
+        // private readonly IRentalContractRepository _contractRepository;
 
-        public PaymentsController(
-            IPaymentRepository paymentRepository,
-            IRentalContractRepository contractRepository)
+        // public PaymentsController(IPaymentRepository paymentRepository, IRentalContractRepository contractRepository)
+        // {
+        //     _paymentRepository = paymentRepository;
+        //     _contractRepository = contractRepository;
+        // }
+
+        // === New UnitOfWork Injection ===
+        private readonly IUnitOfWork _unitOfWork;
+
+        public PaymentsController(IUnitOfWork unitOfWork)
         {
-            _paymentRepository = paymentRepository;
-            _contractRepository = contractRepository;
+            _unitOfWork = unitOfWork;
         }
 
         // GET: Payments
@@ -39,8 +46,11 @@ namespace Real_Estate___Rental_System_CRUD.Controllers
             // .ThenInclude(c => c.Tenant).ToList();
             // return View(payments);
 
-            // === New Repository Code ===
-            var payments = await _paymentRepository.GetAllPaymentsAsync();
+            // === Old Repository Code (Commented Out) ===
+            // var payments = await _paymentRepository.GetAllPaymentsAsync();
+
+            // === New Repository Code via UnitOfWork ===
+            var payments = await _unitOfWork.PaymentRepository.GetAllPaymentsAsync();
             return View(payments);
         }
 
@@ -54,8 +64,8 @@ namespace Real_Estate___Rental_System_CRUD.Controllers
             // .ToList();
             // ViewBag.RentalContractId = new SelectList(contracts, "Id", "DisplayName");
 
-            // === New Repository Code ===
-            var contracts = await _contractRepository.GetAllContractsAsync();
+            // === New Repository Code via UnitOfWork ===
+            var contracts = await _unitOfWork.RentalContractRepository.GetAllContractsAsync();
             ViewBag.RentalContractId = new SelectList(contracts, "Id", "DisplayName");
             return View();
         }
@@ -70,12 +80,12 @@ namespace Real_Estate___Rental_System_CRUD.Controllers
                 // _db.Payments.Add(payment);
                 // _db.SaveChanges();
 
-                // === New Repository Code ===
-                await _paymentRepository.AddPaymentAsync(payment);
+                // === New Repository Code via UnitOfWork ===
+                await _unitOfWork.PaymentRepository.AddPaymentAsync(payment);
                 return RedirectToAction(nameof(Index));
             }
 
-            var contracts = await _contractRepository.GetAllContractsAsync();
+            var contracts = await _unitOfWork.RentalContractRepository.GetAllContractsAsync();
             ViewBag.RentalContractId = new SelectList(contracts, "Id", "DisplayName");
 
             ModelState.AddModelError("", "Please fill all the required fields.");
@@ -91,15 +101,15 @@ namespace Real_Estate___Rental_System_CRUD.Controllers
             // === Old DbContext Code (Commented Out) ===
             // var payment = _db.Payments.FirstOrDefault(m => m.Uuid == Uuid);
 
-            // === New Repository Code ===
-            var payment = await _paymentRepository.GetPaymentByUuidAsync(Uuid);
+            // === New Repository Code via UnitOfWork ===
+            var payment = await _unitOfWork.PaymentRepository.GetPaymentByUuidAsync(Uuid);
 
             if (payment == null)
             {
                 return NotFound();
             }
 
-            var contracts = await _contractRepository.GetAllContractsAsync();
+            var contracts = await _unitOfWork.RentalContractRepository.GetAllContractsAsync();
             ViewBag.RentalContractId = new SelectList(contracts, "Id", "DisplayName", payment.RentalContractId);
 
             return View(payment);
@@ -122,18 +132,18 @@ namespace Real_Estate___Rental_System_CRUD.Controllers
                 // oldPayment.Status = payment.Status;
                 // _db.SaveChanges();
 
-                // === New Repository Code ===
-                var oldPayment = await _paymentRepository.GetPaymentByUuidAsync(payment.Uuid);
+                // === New Repository Code via UnitOfWork ===
+                var oldPayment = await _unitOfWork.PaymentRepository.GetPaymentByUuidAsync(payment.Uuid);
                 if (oldPayment == null)
                 {
                     return NotFound();
                 }
 
-                await _paymentRepository.UpdatePaymentAsync(payment);
+                await _unitOfWork.PaymentRepository.UpdatePaymentAsync(payment);
                 return RedirectToAction(nameof(Index));
             }
 
-            var contracts = await _contractRepository.GetAllContractsAsync();
+            var contracts = await _unitOfWork.RentalContractRepository.GetAllContractsAsync();
             ViewBag.RentalContractId = new SelectList(contracts, "Id", "DisplayName", payment.RentalContractId);
 
             ModelState.AddModelError("", "Please fill all the required fields.");
@@ -150,8 +160,8 @@ namespace Real_Estate___Rental_System_CRUD.Controllers
             //     .ThenInclude(c => c.Tenant)
             //     .FirstOrDefault(p => p.Id == Id);
 
-            // === New Repository Code ===
-            var payment = await _paymentRepository.GetPaymentByIdAsync(Id);
+            // === New Repository Code via UnitOfWork ===
+            var payment = await _unitOfWork.PaymentRepository.GetPaymentByIdAsync(Id);
 
             if (payment == null)
             {
@@ -174,8 +184,8 @@ namespace Real_Estate___Rental_System_CRUD.Controllers
             //     _db.SaveChanges();
             // }
 
-            // === New Repository Code ===
-            await _paymentRepository.DeletePaymentAsync(Id);
+            // === New Repository Code via UnitOfWork ===
+            await _unitOfWork.PaymentRepository.DeletePaymentAsync(Id);
             return RedirectToAction(nameof(Index));
         }
     }

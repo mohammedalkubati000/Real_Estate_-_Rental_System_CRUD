@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Real_Estate___Rental_System_CRUD.Models;
 using Real_Estate___Rental_System_CRUD.Repositories;
+using Real_Estate___Rental_System_CRUD.Repositories.Base;
 
 namespace Real_Estate___Rental_System_CRUD.Controllers
 {
@@ -15,12 +16,20 @@ namespace Real_Estate___Rental_System_CRUD.Controllers
         //     _db = db;
         // }
 
-        // === New Repository Pattern Injection ===
-        private readonly ITenantRepository _tenantRepository;
+        // === Old Repository Pattern Injection (Commented Out) ===
+        // private readonly ITenantRepository _tenantRepository;
 
-        public TenantsController(ITenantRepository tenantRepository)
+        // public TenantsController(ITenantRepository tenantRepository)
+        // {
+        //     _tenantRepository = tenantRepository;
+        // }
+
+        // === New UnitOfWork Injection ===
+        private readonly IUnitOfWork _unitOfWork;
+
+        public TenantsController(IUnitOfWork unitOfWork)
         {
-            _tenantRepository = tenantRepository;
+            _unitOfWork = unitOfWork;
         }
 
         // GET: Tenants
@@ -30,8 +39,11 @@ namespace Real_Estate___Rental_System_CRUD.Controllers
             // IEnumerable<Tenant> tenants = _db.Tenants.ToList();
             // return View(tenants);
 
-            // === New Repository Code ===
-            var tenants = await _tenantRepository.GetAllTenantsAsync();
+            // === Old Repository Code (Commented Out) ===
+            // var tenants = await _tenantRepository.GetAllTenantsAsync();
+
+            // === New Repository Code via UnitOfWork ===
+            var tenants = await _unitOfWork.TenantRepository.GetAllTenantsAsync();
             return View(tenants);
         }
 
@@ -52,8 +64,8 @@ namespace Real_Estate___Rental_System_CRUD.Controllers
                 // _db.Tenants.Add(tenant);
                 // _db.SaveChanges();
 
-                // === New Repository Code ===
-                await _tenantRepository.AddTenantAsync(tenant);
+                // === New Repository Code via UnitOfWork ===
+                await _unitOfWork.TenantRepository.AddTenantAsync(tenant);
                 return RedirectToAction(nameof(Index));
             }
 
@@ -73,8 +85,8 @@ namespace Real_Estate___Rental_System_CRUD.Controllers
             // === Old DbContext Code (Commented Out) ===
             // var tenant = _db.Tenants.FirstOrDefault(m => m.Uuid == Uuid);
 
-            // === New Repository Code ===
-            var tenant = await _tenantRepository.GetTenantByUuidAsync(Uuid);
+            // === New Repository Code via UnitOfWork ===
+            var tenant = await _unitOfWork.TenantRepository.GetTenantByUuidAsync(Uuid);
 
             if (tenant == null)
             {
@@ -100,14 +112,14 @@ namespace Real_Estate___Rental_System_CRUD.Controllers
                 // oldTenant.Email = tenant.Email;
                 // _db.SaveChanges();
 
-                // === New Repository Code ===
-                var existingTenant = await _tenantRepository.GetTenantByUuidAsync(tenant.Uuid);
+                // === New Repository Code via UnitOfWork ===
+                var existingTenant = await _unitOfWork.TenantRepository.GetTenantByUuidAsync(tenant.Uuid);
                 if (existingTenant == null)
                 {
                     return NotFound();
                 }
 
-                await _tenantRepository.UpdateTenantAsync(tenant);
+                await _unitOfWork.TenantRepository.UpdateTenantAsync(tenant);
                 return RedirectToAction(nameof(Index));
             }
 
@@ -127,8 +139,8 @@ namespace Real_Estate___Rental_System_CRUD.Controllers
             // === Old DbContext Code (Commented Out) ===
             // var tenant = _db.Tenants.FirstOrDefault(m => m.Uuid == Uuid);
 
-            // === New Repository Code ===
-            var tenant = await _tenantRepository.GetTenantByUuidAsync(Uuid);
+            // === New Repository Code via UnitOfWork ===
+            var tenant = await _unitOfWork.TenantRepository.GetTenantByUuidAsync(Uuid);
 
             if (tenant == null)
             {
@@ -150,14 +162,14 @@ namespace Real_Estate___Rental_System_CRUD.Controllers
             // _db.Tenants.Remove(olddept);
             // _db.SaveChanges();
 
-            // === New Repository Code ===
-            var existingTenant = await _tenantRepository.GetTenantByUuidAsync(tenant.Uuid);
+            // === New Repository Code via UnitOfWork ===
+            var existingTenant = await _unitOfWork.TenantRepository.GetTenantByUuidAsync(tenant.Uuid);
             if (existingTenant == null)
             {
                 return NotFound();
             }
 
-            await _tenantRepository.DeleteTenantAsync(tenant.Uuid);
+            await _unitOfWork.TenantRepository.DeleteTenantAsync(tenant.Uuid);
             return RedirectToAction(nameof(Index));
         }
     }

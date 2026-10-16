@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Real_Estate___Rental_System_CRUD.Repositories;
+using Real_Estate___Rental_System_CRUD.Repositories.Base;
 using System.Security.Claims;
 
 namespace Real_Estate___Rental_System_CRUD.Controllers
@@ -17,12 +18,19 @@ namespace Real_Estate___Rental_System_CRUD.Controllers
         //     _db = db;
         // }
 
-        // === New Repository Pattern Injection ===
-        private readonly IUserRepository _userRepository;
+        // === Old Repository Pattern Injection (Commented Out) ===
+        // private readonly IUserRepository _userRepository;
+        // public AccountsController(IUserRepository userRepository)
+        // {
+        //     _userRepository = userRepository;
+        // }
 
-        public AccountsController(IUserRepository userRepository)
+        // === New UnitOfWork Injection ===
+        private readonly IUnitOfWork _unitOfWork;
+
+        public AccountsController(IUnitOfWork unitOfWork)
         {
-            _userRepository = userRepository;
+            _unitOfWork = unitOfWork;
         }
 
         //////
@@ -41,8 +49,11 @@ namespace Real_Estate___Rental_System_CRUD.Controllers
             // === Old DbContext Code (Commented Out) ===
             // var user = _db.Users.FirstOrDefault(x => x.Email == email);
 
-            // === New Repository Code ===
-            var user = await _userRepository.GetUserByEmailAsync(email);
+            // === Old Repository Code (Commented Out) ===
+            // var user = await _userRepository.GetUserByEmailAsync(email);
+
+            // === New Repository Code via UnitOfWork ===
+            var user = await _unitOfWork.UserRepository.GetUserByEmailAsync(email);
 
             if (user == null)
             {
