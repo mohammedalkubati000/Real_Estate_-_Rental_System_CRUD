@@ -2,10 +2,10 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using Real_Estate___Rental_System_CRUD.Data;
-using Real_Estate___Rental_System_CRUD.Models;
-using Real_Estate___Rental_System_CRUD.Repositories;
-using Real_Estate___Rental_System_CRUD.Repositories.Base;
+using Real_Estate___Rental_System_CRUD.Infrastructure.Data;
+using Real_Estate___Rental_System_CRUD.Domain.Models;
+using Real_Estate___Rental_System_CRUD.Infrastructure.Repositories;
+using Real_Estate___Rental_System_CRUD.Infrastructure.Repositories.Base;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Real_Estate___Rental_System_CRUD.Controllers

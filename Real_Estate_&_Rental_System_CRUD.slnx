@@ -1,3 +1,7 @@
 <Solution>
+  <Project Path="Real_Estate_&amp;_Rental_System_CRUD.API/Real_Estate_&amp;_Rental_System_CRUD.API.csproj" Id="f26fe406-650d-42b1-8ca7-a9175948b428" />
+  <Project Path="Real_Estate_&amp;_Rental_System_CRUD.Application/Real_Estate_&amp;_Rental_System_CRUD.Application.csproj" Id="c560900b-e8f0-4b00-be90-e5007629697c" />
+  <Project Path="Real_Estate_&amp;_Rental_System_CRUD.Domain/Real_Estate_&amp;_Rental_System_CRUD.Domain.csproj" Id="b1afb547-d3df-4968-b384-bc93b487d42f" />
+  <Project Path="Real_Estate_&amp;_Rental_System_CRUD.Infrastructure/Real_Estate_&amp;_Rental_System_CRUD.Infrastructure.csproj" Id="ea14a23f-04db-4b77-ba49-ab8cd8087be3" />
   <Project Path="Real_Estate_&amp;_Rental_System_CRUD/Real_Estate_&amp;_Rental_System_CRUD.csproj" />
 </Solution>

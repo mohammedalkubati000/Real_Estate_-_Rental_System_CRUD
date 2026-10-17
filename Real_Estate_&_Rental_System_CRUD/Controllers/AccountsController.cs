@@ -2,8 +2,8 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Real_Estate___Rental_System_CRUD.Repositories;
-using Real_Estate___Rental_System_CRUD.Repositories.Base;
+using Real_Estate___Rental_System_CRUD.Infrastructure.Repositories;
+using Real_Estate___Rental_System_CRUD.Infrastructure .Repositories.Base;
 using System.Security.Claims;
 
 namespace Real_Estate___Rental_System_CRUD.Controllers

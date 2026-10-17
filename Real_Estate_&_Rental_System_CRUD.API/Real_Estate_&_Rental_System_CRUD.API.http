@@ -1,0 +1,6 @@
+@Real_Estate___Rental_System_CRUD.API_HostAddress = http://localhost:5104
+
+GET {{Real_Estate___Rental_System_CRUD.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

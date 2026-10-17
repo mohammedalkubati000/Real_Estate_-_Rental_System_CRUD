@@ -2,10 +2,10 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using Real_Estate___Rental_System_CRUD.Data;
-using Real_Estate___Rental_System_CRUD.Models;
-using Real_Estate___Rental_System_CRUD.Repositories;
-using Real_Estate___Rental_System_CRUD.Repositories.Base;
+using Real_Estate___Rental_System_CRUD.Infrastructure.Data;
+using Real_Estate___Rental_System_CRUD.Domain.Models;
+using Real_Estate___Rental_System_CRUD.Infrastructure.Repositories;
+using Real_Estate___Rental_System_CRUD.Infrastructure.Repositories.Base;
 
 namespace Real_Estate___Rental_System_CRUD.Controllers
 {
@@ -156,7 +156,7 @@ namespace Real_Estate___Rental_System_CRUD.Controllers
                 .Select(p => new
                 {
                     p.Id,
-                    Text = (p.PropertyTypeName != null ? p.PropertyTypeName : "") + " - " + p.City + " - " + p.Address
+                    Text = (p.PropertyType != null ? p.PropertyType.Name : "") + " - " + p.City + " - " + p.Address
                 });
 
             var tenants = await _unitOfWork.TenantRepository.GetAllTenantsAsync();

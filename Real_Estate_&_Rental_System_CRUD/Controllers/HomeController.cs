@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Real_Estate___Rental_System_CRUD.Domain.Models;
 using Real_Estate___Rental_System_CRUD.Models;
 using System.Diagnostics;
 using Microsoft.AspNetCore.Authorization;

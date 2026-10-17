@@ -17,4 +17,10 @@
 		</PackageReference>
 	</ItemGroup>
 
+	<ItemGroup>
+	  <ProjectReference Include="..\Real_Estate_&amp;_Rental_System_CRUD.Application\Real_Estate_&amp;_Rental_System_CRUD.Application.csproj" />
+	  <ProjectReference Include="..\Real_Estate_&amp;_Rental_System_CRUD.Domain\Real_Estate_&amp;_Rental_System_CRUD.Domain.csproj" />
+	  <ProjectReference Include="..\Real_Estate_&amp;_Rental_System_CRUD.Infrastructure\Real_Estate_&amp;_Rental_System_CRUD.Infrastructure.csproj" />
+	</ItemGroup>
+
 </Project>

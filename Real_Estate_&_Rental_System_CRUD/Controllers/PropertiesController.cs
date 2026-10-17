@@ -2,12 +2,12 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using Real_Estate___Rental_System_CRUD.Data;
-using Real_Estate___Rental_System_CRUD.Dtos;
-using Real_Estate___Rental_System_CRUD.Models;
-using Real_Estate___Rental_System_CRUD.Repositories;
-using Real_Estate___Rental_System_CRUD.Repositories.Base;
-using Real_Estate___Rental_System_CRUD.Services.Base;
+using Real_Estate___Rental_System_CRUD.Infrastructure.Data;
+using Real_Estate___Rental_System_CRUD.Application.Dtos;
+using Real_Estate___Rental_System_CRUD.Domain.Models;
+using Real_Estate___Rental_System_CRUD.Infrastructure.Repositories;
+using Real_Estate___Rental_System_CRUD.Infrastructure.Repositories.Base;
+using Real_Estate___Rental_System_CRUD.Application.Services.Base;
 
 namespace Real_Estate___Rental_System_CRUD.Controllers
 {
@@ -46,11 +46,10 @@ namespace Real_Estate___Rental_System_CRUD.Controllers
         }
 
 
-
-
         //////
         // Index
         //////
+        [HttpGet]
         public async Task<IActionResult> Index()
         {
             // === Old Repository Code (Commented Out) ===
@@ -60,37 +59,36 @@ namespace Real_Estate___Rental_System_CRUD.Controllers
             //var propertiesFromDb = await _unitOfWork.PropertyRepository.GetAllPropertiesAsync();
 
             IEnumerable<PropertyDto> properties = await _propertyService.GetAllProperties();
-            {
-                // mapping the properties of properties to PropertyDto
-                //* Id = e.Id,
-                //   PropertyTypeId = e.PropertyTypeId,
-                //   PropertyTypeName = e.PropertyType!.Name,
-                //   City = e.City,
-                //  Address = e.Address,
-                //   AnnualRent = e.AnnualRent,
-                //  IsAvailable = e.IsAvailable,
-                // PropertyTypeName = e.PropertyType != null ? e.PropertyType.Name : null,
-                //   }).ToList(); 
 
-                return View(properties);
-            }
+            // mapping the properties of properties to PropertyDto
+            //* Id = e.Id,
+            //   PropertyTypeId = e.PropertyTypeId,
+            //   PropertyTypeName = e.PropertyType!.Name,
+            //   City = e.City,
+            //  Address = e.Address,
+            //   AnnualRent = e.AnnualRent,
+            //  IsAvailable = e.IsAvailable,
+            // PropertyTypeName = e.PropertyType != null ? e.PropertyType.Name : null,
+            //   }).ToList(); 
 
-            // public ActionResult Index()
-            // {
-            //     IEnumerable<Property> properties = _db.Properties
-            //         .Include(p => p.PropertyType)
-            //         .ToList();
-            //     return View(properties);
-            // }
-
-            // Create
-
-            // AI Test the PropertyType
-            // private void LoadPropertyTypes(int? selectedId = null)
-            // {
-            //     ViewBag.PropertyTypeId = new SelectList(_db.PropertyType, "Id", "Name", selectedId);
-            // }
+            return View(properties);
         }
+
+        // public ActionResult Index()
+        // {
+        //     IEnumerable<Property> properties = _db.Properties
+        //         .Include(p => p.PropertyType)
+        //         .ToList();
+        //     return View(properties);
+        // }
+
+        // Create
+
+        // AI Test the PropertyType
+        // private void LoadPropertyTypes(int? selectedId = null)
+        // {
+        //     ViewBag.PropertyTypeId = new SelectList(_db.PropertyType, "Id", "Name", selectedId);
+        // }
         [HttpGet]
         public async Task<IActionResult> Create()
         {
