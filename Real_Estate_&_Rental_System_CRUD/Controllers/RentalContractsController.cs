@@ -156,7 +156,7 @@ namespace Real_Estate___Rental_System_CRUD.Controllers
                 .Select(p => new
                 {
                     p.Id,
-                    Text = (p.PropertyType != null ? p.PropertyType.Name : "") + " - " + p.City + " - " + p.Address
+                    Text = (p.PropertyTypeName != null ? p.PropertyTypeName : "") + " - " + p.City + " - " + p.Address
                 });
 
             var tenants = await _unitOfWork.TenantRepository.GetAllTenantsAsync();

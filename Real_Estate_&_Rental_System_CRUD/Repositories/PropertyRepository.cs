@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Real_Estate___Rental_System_CRUD.Data;
+using Real_Estate___Rental_System_CRUD.Dtos;
 using Real_Estate___Rental_System_CRUD.Models;
 
 namespace Real_Estate___Rental_System_CRUD.Repositories
@@ -30,10 +31,20 @@ namespace Real_Estate___Rental_System_CRUD.Repositories
             return Task.CompletedTask;
         }
 
-        public async Task<IEnumerable<Property>> GetAllPropertiesAsync()
+        public async Task<IEnumerable<PropertyDto>> GetAllPropertiesAsync()
         {
-            IEnumerable<Property> properties = await _db.Properties
-                .Include(p => p.PropertyType)
+            IEnumerable<PropertyDto> properties = await _db.Properties
+                .Select(p => new PropertyDto
+                {
+                    Id = p.Id,
+                    Uuid = p.Uuid,
+                    PropertyTypeId = p.PropertyTypeId,
+                    PropertyTypeName = p.PropertyType != null ? p.PropertyType.Name : null,
+                    City = p.City,
+                    Address = p.Address,
+                    AnnualRent = p.AnnualRent,
+                    IsAvailable = p.IsAvailable
+                })
                 .ToListAsync();
 
             return properties;

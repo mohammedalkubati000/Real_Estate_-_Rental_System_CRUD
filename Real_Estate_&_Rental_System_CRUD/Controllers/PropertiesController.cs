@@ -7,6 +7,7 @@ using Real_Estate___Rental_System_CRUD.Dtos;
 using Real_Estate___Rental_System_CRUD.Models;
 using Real_Estate___Rental_System_CRUD.Repositories;
 using Real_Estate___Rental_System_CRUD.Repositories.Base;
+using Real_Estate___Rental_System_CRUD.Services.Base;
 
 namespace Real_Estate___Rental_System_CRUD.Controllers
 {
@@ -27,13 +28,25 @@ namespace Real_Estate___Rental_System_CRUD.Controllers
         //     _PropertyRepository = propertyRepository;
         // }
 
-        // === New UnitOfWork Injection ===
-        private readonly IUnitOfWork _unitOfWork;
 
-        public PropertiesController(IUnitOfWork unitOfWork)
+
+        // === New UnitOfWork Injection ===
+        //private readonly IUnitOfWork _unitOfWork;
+
+        //public PropertiesController(IUnitOfWork unitOfWork)
+        //{
+        //  _unitOfWork = unitOfWork;
+        //}
+
+        private readonly IPropertyService _propertyService;
+
+        public PropertiesController(IPropertyService propertyService)
         {
-            _unitOfWork = unitOfWork;
+            _propertyService = propertyService;
         }
+
+
+
 
         //////
         // Index
@@ -44,52 +57,48 @@ namespace Real_Estate___Rental_System_CRUD.Controllers
             // var propertiesFromDb = await _PropertyRepository.GetAllPropertiesAsync();
 
             // === New Repository Code via UnitOfWork ===
-            var propertiesFromDb = await _unitOfWork.PropertyRepository.GetAllPropertiesAsync();
+            //var propertiesFromDb = await _unitOfWork.PropertyRepository.GetAllPropertiesAsync();
 
-            IEnumerable<PropertyDto> properties = propertiesFromDb.Select(e => new PropertyDto
+            IEnumerable<PropertyDto> properties = await _propertyService.GetAllProperties();
             {
                 // mapping the properties of properties to PropertyDto
-                Id = e.Id,
-                PropertyTypeId = e.PropertyTypeId,
-                PropertyTypeName = e.PropertyType!.Name,
-                City = e.City,
-                Address = e.Address,
-                AnnualRent = e.AnnualRent,
-                IsAvailable = e.IsAvailable,
+                //* Id = e.Id,
+                //   PropertyTypeId = e.PropertyTypeId,
+                //   PropertyTypeName = e.PropertyType!.Name,
+                //   City = e.City,
+                //  Address = e.Address,
+                //   AnnualRent = e.AnnualRent,
+                //  IsAvailable = e.IsAvailable,
                 // PropertyTypeName = e.PropertyType != null ? e.PropertyType.Name : null,
-            }).ToList();
+                //   }).ToList(); 
 
-            return View(properties);
+                return View(properties);
+            }
+
+            // public ActionResult Index()
+            // {
+            //     IEnumerable<Property> properties = _db.Properties
+            //         .Include(p => p.PropertyType)
+            //         .ToList();
+            //     return View(properties);
+            // }
+
+            // Create
+
+            // AI Test the PropertyType
+            // private void LoadPropertyTypes(int? selectedId = null)
+            // {
+            //     ViewBag.PropertyTypeId = new SelectList(_db.PropertyType, "Id", "Name", selectedId);
+            // }
         }
-
-        // public ActionResult Index()
-        // {
-        //     IEnumerable<Property> properties = _db.Properties
-        //         .Include(p => p.PropertyType)
-        //         .ToList();
-        //     return View(properties);
-        // }
-
-        // Create
-
-        // AI Test the PropertyType
-        // private void LoadPropertyTypes(int? selectedId = null)
-        // {
-        //     ViewBag.PropertyTypeId = new SelectList(_db.PropertyType, "Id", "Name", selectedId);
-        // }
-
         [HttpGet]
         public async Task<IActionResult> Create()
         {
-            // LoadPropertyTypes(); // AI is on
-
-            // === Old Repository Code (Commented Out) ===
-            // var propertyTypes = await _PropertyRepository.GetPropertyTypesAsync();
-
-            // === New Repository Code via UnitOfWork ===
-            var propertyTypes = await _unitOfWork.PropertyRepository.GetPropertyTypesAsync();
+            // === Service Code ===
+            var propertyTypes = await _propertyService.GetAllPropertyTypes();
             SelectList selectList = new SelectList(propertyTypes, "Id", "Name");
-            ViewBag.d = selectList;
+            ViewBag.PropertyTypes = selectList;
+
             return View();
         }
 
@@ -111,12 +120,12 @@ namespace Real_Estate___Rental_System_CRUD.Controllers
                 // await _PropertyRepository.AddPropertyAsync(property);
 
                 // === New Repository Code via UnitOfWork ===
-                await _unitOfWork.PropertyRepository.AddPropertyAsync(property);
+                await _propertyService.AddProperty(propertydto);
                 return RedirectToAction("Index");
             }
 
             // === New Repository Code via UnitOfWork ===
-            var propertyTypes = await _unitOfWork.PropertyRepository.GetPropertyTypesAsync();
+            var propertyTypes = await _propertyService.GetAllPropertyTypes();
             ViewBag.d = new SelectList(propertyTypes, "Id", "Name");
             ModelState.AddModelError("", "Please fill all the required fields.");
             return View(propertydto);
@@ -131,7 +140,7 @@ namespace Real_Estate___Rental_System_CRUD.Controllers
             // var property = await _PropertyRepository.GetPropertyByUuidAsync(Uuid);
 
             // === New Repository Code via UnitOfWork ===
-            var property = await _unitOfWork.PropertyRepository.GetPropertyByUuidAsync(Uuid);
+            var property = await _propertyService.GetPropertyByUuid(Uuid);
             if (property == null)
             {
                 return NotFound();
@@ -144,44 +153,32 @@ namespace Real_Estate___Rental_System_CRUD.Controllers
         {
             if (ModelState.IsValid)
             {
-                // === New Repository Code via UnitOfWork ===
-                var oldProperty = await _unitOfWork.PropertyRepository.GetPropertyByUuidAsync(propertydto.Uuid);
-
-                if (oldProperty == null)
-                {
-                    return NotFound();
-                }
-
-                // Mapping updated properties
-                oldProperty.PropertyTypeId = propertydto.PropertyTypeId;
-                oldProperty.City = propertydto.City;
-                oldProperty.Address = propertydto.Address;
-                oldProperty.AnnualRent = propertydto.AnnualRent;
-
-                await _unitOfWork.PropertyRepository.UpdatePropertyAsync(oldProperty);
-                return RedirectToAction("Index");
+                // === New Service Code ===
+                await _propertyService.UpdateProperty(propertydto);
+                return RedirectToAction(nameof(Index));
             }
 
-            // إرجاع الـ View مع إعادة تحميل أنواع العقارات في حال وجود خطأ في المدخلات
-            var propertyTypes = await _unitOfWork.PropertyRepository.GetPropertyTypesAsync();
-            ViewBag.d = new SelectList(propertyTypes, "Id", "Name");
+            // إعادة تحميل أنواع العقارات في حال وجود خطأ في مدخلات النموذج
+            var propertyTypes = await _propertyService.GetAllPropertyTypes();
+            ViewBag.PropertyTypes = new SelectList(propertyTypes, "Id", "Name", propertydto.PropertyTypeId);
             ModelState.AddModelError("", "Please fill all the required fields.");
+
             return View(propertydto);
         }
 
         //
-       // [HttpPost]
-    //    public async Task<IActionResult> Edit(PropertyUpdateDto propertydto)
-      //  {
-       //     if (ModelState.IsValid)
-       //     {
-                // === Old Repository Code (Commented Out) ===
-                // var oldProperty = await _PropertyRepository.GetPropertyByUuidAsync(propertydto.Uuid);
+        // [HttpPost]
+        //    public async Task<IActionResult> Edit(PropertyUpdateDto propertydto)
+        //  {
+        //     if (ModelState.IsValid)
+        //     {
+        // === Old Repository Code (Commented Out) ===
+        // var oldProperty = await _PropertyRepository.GetPropertyByUuidAsync(propertydto.Uuid);
 
-                // === New Repository Code via UnitOfWork ===
+        // === New Repository Code via UnitOfWork ===
 
-          //      var property = await _unitOfWork.PropertyRepository.GetPropertyByUuidAsync(Uuid);
-          //  }
-       // }
+        //      var property = await _unitOfWork.PropertyRepository.GetPropertyByUuidAsync(Uuid);
+        //  }
+        // }
     }
 }
